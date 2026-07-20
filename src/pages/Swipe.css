@@ -1,0 +1,1379 @@
+.swipe-page {
+  /* svh (small viewport height), not dvh -- this page has no scrollable
+     content to ever trigger the browser chrome to collapse, and dvh can
+     resolve larger than what's actually visible until that happens on iOS
+     Safari, leaving a permanent dead gap at the bottom. svh always matches
+     the toolbars-visible height, so there's never a gap to fill. */
+  height: 100svh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Loading-skeleton placeholder bars — previously referenced a `shimmer`
+   keyframe that was never defined anywhere, so the loading card just sat
+   static with no animation at all. */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.skeleton-pulse {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.swipe-header-wrap {
+  position: relative;
+}
+
+.swipe-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(16px + env(safe-area-inset-top)) 20px 12px;
+}
+
+.back-btn-sm {
+  /* This page's background is solid black by design (a Tinder-style
+     immersive deck, not the light theme .cat-tab/.list-card pills use their
+     own background for) -- var(--text)/rgba(0,0,0,...) were tuned for a
+     light page and would be invisible here. */
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.swipe-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swipe-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swipe-count {
+  background: rgba(11,122,117,0.12);
+  color: var(--primary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* View toggle */
+.swipe-view-toggle {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 3px;
+}
+.swipe-view-toggle button {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: none;
+  color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.swipe-view-toggle button.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* Category tabs */
+.cat-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 16px 5px;
+  scrollbar-width: none;
+}
+.cat-tabs::-webkit-scrollbar { display: none; }
+.cat-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.cat-tab.active {
+  background: var(--card);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* List view */
+.list-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px calc(90px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.list-card {
+  display: flex;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.list-card:active { background: var(--bg); }
+.list-card-img {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a3a5c, #0ea5e9);
+}
+.list-card-body {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.list-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.list-card-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.list-card-sub { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+.list-card-meta { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.list-card-addr { color: var(--text3); }
+.list-card-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.list-save-btn {
+  font-size: 22px;
+  color: var(--text3);
+  background: none;
+  padding: 0 4px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.list-save-btn.saved { color: #ef4444; }
+
+.swipe-dest {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  padding: 0 20px 4px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.swipe-progress {
+  color: rgba(255,255,255,0.4);
+}
+
+.swipe-change-btn {
+  background: none;
+  border: none;
+  color: #7c6af7;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+}
+
+.trip-edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+}
+
+.trip-edit-sheet {
+  background: var(--card);
+  width: 100%;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+}
+
+.trip-edit-sheet h3 {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 18px;
+}
+
+.trip-edit-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.trip-edit-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.trip-edit-dates input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.trip-edit-dates span {
+  color: var(--text3);
+}
+
+.trip-edit-group-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.trip-edit-group-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.trip-edit-group-btn.active {
+  background: rgba(11,122,117,0.12);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.trip-edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.trip-edit-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.trip-edit-autocomplete-item {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trip-edit-autocomplete-item .ac-name {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.trip-edit-autocomplete-item .ac-meta {
+  color: var(--text3);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.trip-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.trip-edit-cancel, .trip-edit-save {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+}
+
+.trip-edit-cancel {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.trip-edit-save {
+  background: var(--primary);
+  color: white;
+}
+
+.trip-edit-cancel:disabled, .trip-edit-save:disabled {
+  opacity: 0.6;
+}
+
+.swipe-hint {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 32px;
+}
+
+.hint-nope {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  opacity: 0.6;
+}
+
+.hint-like {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  opacity: 0.6;
+}
+
+.swipe-flash {
+  position: fixed;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: 900;
+  padding: 12px 32px;
+  border-radius: 14px;
+  z-index: 200;
+  pointer-events: none;
+  letter-spacing: 2px;
+  animation: flashIn 0.18s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+
+.swipe-flash.like {
+  background: rgba(34,197,94,0.95);
+  color: white;
+  border: 4px solid #22c55e;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  box-shadow: 0 8px 40px rgba(34,197,94,0.4);
+}
+
+.swipe-flash.nope {
+  background: rgba(239,68,68,0.95);
+  color: white;
+  border: 4px solid #ef4444;
+  transform: translate(-50%, -50%) rotate(12deg);
+  box-shadow: 0 8px 40px rgba(239,68,68,0.4);
+}
+
+.swipe-flash.super {
+  background: rgba(250,204,21,0.95);
+  color: #000;
+  border: 4px solid #fbbf24;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  box-shadow: 0 8px 40px rgba(250,204,21,0.4);
+}
+
+@keyframes flashIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-12deg); }
+  to   { opacity: 1; }
+}
+
+.cards-container {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  /* No horizontal padding here — its only child (.swipe-card-wrapper) is
+     absolutely positioned, so padding on this element wouldn't inset it;
+     the card's horizontal margin is set directly via .swipe-card-wrapper's
+     own `inset` instead. */
+  margin-bottom: 0;
+}
+
+.swipe-card-wrapper {
+  /* react-tinder-card only ever sets an inline `transform` for the drag
+     gesture — it never touches top/left/width/height/bottom, so pinning
+     all four sides here doesn't conflict with it (only a CSS transform of
+     our own, e.g. for vertical centering, would fight the drag's inline
+     transform — plain inset positioning never does).
+     top:0/bottom:0 gives this box a DEFINITE height matching
+     .cards-container exactly. Content-sizing this box (no top/bottom) let
+     a square photo + full info panel add up to taller than the space
+     .swipe-actions needs below, pushing the button row off-screen on
+     shorter phones — a real overflow bug, not just a visual preference.
+     Filling the container's height and letting .business-card shrink to
+     fit inside it (see below) is what actually guarantees the Nope/Must
+     Do/Like row stays visible no matter the photo's natural size.
+     width is intentionally NOT 100% — with explicit left+right insets,
+     percentage width resolves against the full containing block and
+     overflows past the right inset; leaving it auto is what makes the box
+     correctly fill just the gap between the two insets. max-width still
+     caps it (and re-engages margin:auto to center) on very wide viewports. */
+  position: absolute !important;
+  left: 8px;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+  margin: 0 auto;
+  max-width: 470px;
+}
+
+.business-card {
+  background: var(--card);
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  user-select: none;
+  cursor: grab;
+  width: 100%;
+  /* height:auto (not 100%) so the card is exactly as tall as its content
+     when that content fits -- no dead space inside the card's own
+     background. max-height:100% is the actual overflow guard: only when
+     square-photo + info-panel would exceed .swipe-card-wrapper's bounded
+     height does this clip in, which is what forces the flex column below
+     to redistribute (shrinking .card-image-wrap, since .card-info-panel
+     stays flex-shrink:0) instead of pushing .swipe-actions off-screen. */
+  height: auto;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.business-card.top { cursor: pointer; }
+
+.card-image-wrap {
+  position: relative;
+  /* Square, not "however much space is left" -- a fixed 1:1 shape reads as
+     a real photo, not a stretched rectangle. flex-shrink is deliberately
+     NOT 0: .business-card now has a definite height (fills .swipe-card-
+     wrapper), so if a square at full card width would be taller than the
+     space left after .card-info-panel's own content, the browser shrinks
+     this box -- still perfectly square, just smaller -- instead of
+     overflowing past .swipe-actions. min-height:0 is required for that
+     shrink to actually take effect inside a flex column. */
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #12121f 100%);
+}
+
+.swipe-card-photo {
+  /* Renamed from .card-image -- that name collided with an unrelated
+     .card-image in src/styles/EntityCard.css (a hub-directory thumbnail,
+     nothing to do with the swipe deck). Vite bundles all CSS globally with
+     no scoping, so whichever rule landed later in the built bundle won for
+     the shared width/height/position properties -- EntityCard.css's
+     height:200px; position:relative silently overrode this rule in
+     production, which is what actually caused the "gap and rectangle
+     instead of square photo" bug, not anything wrong with the rule itself.
+     A unique class name makes this impossible to collide with again.
+
+     absolute + inset:0, not width/height:100% -- percentage heights on an
+     <img> depend on the parent having a "definite" computed height, which
+     is fragile across mobile Safari especially with svh ancestors in the
+     chain, and was the actual cause of the dark card-image-wrap gradient
+     (its own placeholder background) showing through as a gap below the
+     photo instead of the photo reaching all the way to the info panel.
+     inset:0 pins all four edges directly, no percentage resolution needed. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.08) 0%,
+    transparent 30%,
+    transparent 40%,
+    rgba(0,0,0,0.6) 70%,
+    rgba(0,0,0,0.92) 100%
+  );
+}
+
+.card-body {
+  padding: 12px 16px 14px;
+  flex-shrink: 0;
+}
+
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.card-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.card-name {
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+
+.open-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.dot { color: var(--text3); }
+
+.card-tagline {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+}
+
+/* ── BusinessCard info panel — solid dark navy footer below the photo
+   (not overlaid on it), matching the richer reference layout: name/rating,
+   location, description, a tag row with icons, then a status pill + Book
+   Now + chevron row. Kept intentionally dark regardless of the (now light)
+   page theme — same rationale as the reference: a dark panel reads
+   consistently over any photo tone without needing per-photo contrast
+   tuning, the way a transparent overlay would. ── */
+.card-type-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  /* business.type can be an arbitrary raw subtype string from the DB —
+     cap + truncate so a long one can't run into the save button at the
+     top-right corner. */
+  max-width: 65%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Compound selectors (not !important) so this reliably wins over
+   .card-featured-badge/.card-match-badge's own `top` regardless of
+   which rule happens to appear later in the file. */
+.card-featured-badge.card-badge-stacked,
+.card-match-badge.card-badge-stacked {
+  top: 48px;
+}
+
+.card-save-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  transition: transform 0.12s;
+}
+
+.card-save-btn:active { transform: scale(0.88); }
+
+.card-save-btn.saved {
+  background: rgba(239,68,68,0.35);
+  box-shadow: 0 2px 10px rgba(239,68,68,0.35);
+}
+
+.card-photo-counter.card-photo-counter-stacked {
+  top: 56px;
+  right: 12px;
+}
+
+.card-info-panel {
+  /* flex-shrink:0 -- this panel always gets its full natural content
+     height first; .card-image-wrap (shrinkable, see its own comment) only
+     gets whatever's left, which is what keeps the card's total height
+     from ever exceeding .business-card's own bounded height. */
+  background: #10233a;
+  color: white;
+  padding: 12px 18px 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.card-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.card-tag-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.card-tag-divider {
+  margin: 0 8px;
+  opacity: 0.35;
+}
+
+.card-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.card-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.9);
+  white-space: nowrap;
+}
+
+.card-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+}
+
+.card-status-pill.status-open .card-status-dot { background: #4ade80; }
+.card-status-pill.status-opening .card-status-dot { background: #38bdf8; }
+.card-status-pill.status-closing .card-status-dot { background: #fb923c; }
+.card-status-pill.status-closed .card-status-dot { background: #94a3b8; }
+
+/* Per-person pricing (activities/tours like parasailing charters) — large
+   and up near the name, since price is often THE deciding factor for
+   booking and shouldn't be a small pill buried at the bottom. */
+.card-price-hero {
+  font-size: 21px;
+  font-weight: 900;
+  color: #fde047;
+  letter-spacing: -0.2px;
+  margin: 2px 0 6px;
+}
+
+.card-bottom-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.card-book-pill {
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.card-chevron-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.swipe-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Sits close to the card now, not a separate floating row far below it --
+     the card is content-sized (square photo + info panel) rather than
+     stretched to fill the whole deck area, so there's real space here to
+     close instead of a gap the card used to occupy. */
+  padding: 4px 20px calc(10px + env(safe-area-inset-bottom));
+}
+
+.swipe-actions-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(14px, 5vw, 28px);
+}
+
+/* Every action button — regardless of row or variant — is the exact same
+   size, scaled to the viewport instead of fixed pixels. */
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: transform 0.12s, box-shadow 0.12s;
+  justify-content: center;
+  width: clamp(60px, 20vw, 84px);
+  height: clamp(60px, 20vw, 84px);
+  flex-shrink: 0;
+}
+
+.action-btn span:first-child { font-size: clamp(20px, 6vw, 28px); }
+
+.action-btn:active { transform: scale(0.88); }
+
+.action-btn.nope {
+  background: var(--card);
+  border: none;
+  color: var(--red);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.swipe-flash.maybe {
+  background: rgba(148,163,184,0.95);
+  color: #1e293b;
+  border: 4px solid #cbd5e1;
+}
+
+.action-btn.like {
+  background: var(--card);
+  border: none;
+  color: var(--green);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.all-done {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.done-emoji { font-size: 64px; }
+.all-done h3 { font-size: 24px; font-weight: 800; color: #fff; }
+.all-done p { font-size: 15px; color: rgba(255,255,255,0.6); }
+.all-done .btn-primary { width: auto; padding: 14px 32px; }
+
+/* .btn-outline (index.css) is white-on-near-transparent-white — tuned for
+   a dark page, not this (light) screen. Scoped override here rather than
+   editing the shared global class, since it's also used on Itinerary.jsx
+   and that page's theme wasn't part of this pass. */
+.all-done .btn-outline {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* ── Featured badge ── */
+.card-featured-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Sponsored badge ── */
+.card-sponsored-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #d97706, #92400e);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Tonight promo badge ── */
+.card-promo-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Photo counter ── */
+.card-photo-counter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Card description ── */
+.card-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+/* ── City / meta row ── */
+.card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+
+/* ── Super flash ── */
+.swipe-flash.super {
+  background: rgba(59,130,246,0.92);
+  color: white;
+  border: 3px solid #3b82f6;
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+/* ── Close (X) button ── */
+.back-btn-sm.close-btn {
+  font-size: 0;
+}
+
+/* ── Back to top ── */
+.back-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 16px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(14,165,233,0.9);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.back-to-top:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* ── Location prompt banner ── */
+.loc-prompt {
+  /* Floats just below .swipe-header (top:100% of .swipe-header-wrap) instead
+     of sitting in normal flow — it shows for any first-time visitor with no
+     location yet, so leaving it in-flow permanently cost every one of them
+     ~40px of card space. */
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  right: 12px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text2);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.loc-prompt span { flex: 1; }
+.loc-yes {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.loc-no {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+/* ── Distance label on card ── */
+.card-distance {
+  color: #7dd3fc;
+  font-size: 11px;
+}
+
+/* ── Match badge ── */
+.card-match-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.card-rating {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fbbf24;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-review-count {
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+}
+
+.card-desc {
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.85);
+  margin: 6px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.action-btn.super {
+  background: var(--card);
+  border: none;
+  color: #d97706;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* ── Drag direction tint overlay ── */
+.card-drag-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.08s;
+  pointer-events: none;
+}
+
+.like-tint {
+  background: rgba(34, 197, 94, 0.35);
+}
+
+.nope-tint {
+  background: rgba(239, 68, 68, 0.35);
+}
+
+.drag-stamp {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  border-width: 4px;
+  border-style: solid;
+  transform: rotate(-15deg);
+  text-transform: uppercase;
+}
+
+.like-stamp {
+  color: #22c55e;
+  border-color: #22c55e;
+  background: rgba(0,0,0,0.55);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.nope-stamp {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: rgba(0,0,0,0.55);
+  transform: rotate(15deg);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* ── Maybe/Undo — float directly on the card (top corners, below the
+   featured/sponsored/photo-count badges) instead of a second button row,
+   so the card itself gets that vertical space. Fixed within
+   .cards-container (not the swiping card), so they stay put while the
+   top card drags/rotates underneath them. */
+.card-float-btn {
+  position: absolute;
+  top: 60px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: transform 0.12s;
+}
+
+.card-float-btn:active { transform: scale(0.88); }
+
+.card-float-btn.undo-float { left: 20px; }
+.card-float-btn.maybe-float { right: 20px; }
+
+/* One-time discovery caption under Maybe/Undo — they're deliberately
+   subtle floating buttons (that's the point, see the comment where
+   they're rendered), so a first-time visitor needs one nudge to find
+   them at all. Dismissed on first tap of either, or after 5s, and
+   never shown again on this device (see showCornerHint). */
+.card-float-hint {
+  position: absolute;
+  top: 106px;
+  z-index: 21;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: hint-fade-in 0.3s ease;
+}
+.card-float-hint.hint-undo { left: 8px; }
+.card-float-hint.hint-maybe { right: 8px; }
+
+@keyframes hint-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-float-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+
+/* ── Hint arrows (restored) ── */
+.swipe-hint {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 28px 0;
+}
+.hint-nope {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ef4444;
+  opacity: 0.5;
+  letter-spacing: 1px;
+}
+.hint-like {
+  font-size: 12px;
+  font-weight: 800;
+  color: #22c55e;
+  opacity: 0.5;
+  letter-spacing: 1px;
+}
+
+/* ── Deal Swipe Card ── */
+.deal-swipe-entity {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.deal-swipe-urgent {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(239,68,68,0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  animation: deal-urgent-pulse 1.2s infinite;
+}
+
+@keyframes deal-urgent-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.65; }
+}
+
+.deal-swipe-spots {
+  margin-bottom: 10px;
+}
+
+.deal-swipe-spots-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.deal-swipe-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.deal-swipe-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #fbbf24 60%, #ef4444 100%);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.deal-swipe-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 4px;
+}
+
+/* ── Social Card ─────────────────────────────────────── */
+.social-card {
+  position: relative;
+  background: #0f172a;
+  border-radius: 20px;
+  overflow: hidden;
+  /* Same fix as .business-card — fills .swipe-card-wrapper (now pinned to
+     .cards-container's real height via inset:0) instead of guessing an
+     aspect-ratio/vh combination that regularly overflowed into
+     .swipe-actions. .social-card-media uses object-fit:cover, so it crops
+     to whatever box it's actually given rather than needing a fixed ratio. */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .15s, border .15s;
+}
+
+.social-card-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.social-card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+}
+
+.social-card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.social-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: linear-gradient(to top, rgba(0,0,0,.9) 0%, transparent 100%);
+  padding: 40px 16px 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.social-card-biz {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.social-card-caption {
+  font-size: 13px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.4;
+}
+
+.social-card-view {
+  margin-top: 8px;
+  align-self: flex-start;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.social-card-play-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}

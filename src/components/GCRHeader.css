@@ -1,0 +1,276 @@
+.gcr-header {
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 20%, #87CEFA 40%, #4A90E2 80%, #3a7bd5 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 16px rgba(0,0,0,.25);
+  /* env(safe-area-inset-top) clears the notch/Dynamic Island — without it
+     the header's top row renders directly under the status bar, so any
+     status-bar indicator (mic/location/etc) visually overlaps the logo. */
+  padding: calc(6px + env(safe-area-inset-top)) 0 0;
+}
+
+.gcr-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 14px 6px;
+}
+
+.gcr-logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.logo-text {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+
+.logo-coast { color: #e0f7fa; }
+
+.gcr-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  /* Safety net if these buttons still don't fit on an unusually narrow
+     device — scrolls internally instead of silently clipping. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.gcr-header-right::-webkit-scrollbar { display: none; }
+
+.trip-swipe-btn {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.5);
+  border-radius: 20px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .18s;
+}
+.trip-swipe-btn:hover {
+  background: rgba(255,255,255,.28);
+  border-color: #fff;
+}
+
+.header-auth-btn {
+  background: rgba(255,255,255,.9);
+  color: #0b5e5a;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s;
+}
+.header-auth-btn:hover { background: #fff; }
+
+.install-btn {
+  background: rgba(255,255,255,.9);
+  color: #2C5282;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  display: none; /* shown by JS when install available */
+}
+
+/* Category Tabs */
+.gcr-cat-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gcr-cat-tabs::-webkit-scrollbar { display: none; }
+
+.cat-tab {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,.88);
+  border: 1.5px solid rgba(255,255,255,.5);
+  border-radius: 22px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2C5282;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .18s;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+.cat-tab:hover,
+.cat-tab.active {
+  background: #fff;
+  border-color: #0b7a75;
+  color: #0b7a75;
+  transform: translateY(-1px);
+}
+
+/* Action Strip — moved to Landing page */
+.gcr-action-strip { display: none; } .gcr-action-strip-HIDDEN {
+  display: flex;
+  gap: 6px;
+  padding: 0 8px 8px;
+  justify-content: center;
+}
+
+.strip-btn {
+  flex: 1;
+  border: none;
+  border-radius: 22px;
+  padding: 9px 10px;
+  min-height: 38px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+  white-space: nowrap;
+}
+
+.strip-btn:hover { transform: translateY(-2px); }
+
+.strip-btn.gold {
+  background: linear-gradient(135deg, #FFD700, #FFC200);
+  color: #1a1a1a;
+  box-shadow: 0 3px 12px rgba(255,215,0,.45);
+}
+
+.strip-btn.teal {
+  background: linear-gradient(135deg, #0b7a75, #14B8A6);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(11,122,117,.35);
+}
+
+@media (max-width: 480px) {
+  .cat-tab { font-size: 12px; padding: 7px 12px; }
+  .strip-btn { font-size: 11px; padding: 7px 8px; }
+  .trip-swipe-btn, .header-auth-btn {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+}
+
+/* Loyalty Modal */
+.loyalty-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loyalty-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px 28px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0,0,0,.25);
+}
+
+.loyalty-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.loyalty-emoji { font-size: 40px; margin-bottom: 10px; }
+
+.loyalty-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1a2b3c;
+  margin: 0 0 10px;
+}
+
+.loyalty-desc {
+  font-size: 14px;
+  color: #4a5568;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.loyalty-sms-btn {
+  display: block;
+  background: linear-gradient(135deg, #FFD700, #FFC200);
+  color: #1a1a1a;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(255,215,0,.4);
+  transition: transform .15s;
+}
+.loyalty-sms-btn:hover { transform: translateY(-2px); }
+
+.loyalty-divider {
+  margin: 18px 0 10px;
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.loyalty-number {
+  font-size: 22px;
+  font-weight: 900;
+  color: #0b7a75;
+  letter-spacing: .04em;
+  margin-bottom: 6px;
+}
+
+.loyalty-hint {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+

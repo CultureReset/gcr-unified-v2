@@ -1,0 +1,138 @@
+/* Standalone live-artist page — headerless, mobile-first, dark. */
+.al-page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(154,120,255,.20), transparent 30%),
+    radial-gradient(circle at 90% 4%, rgba(41,230,183,.12), transparent 26%),
+    linear-gradient(180deg, #060912 0%, #0b1220 46%, #060912 100%);
+  color: #f5f8ff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Arial, sans-serif;
+  padding-bottom: 34px;
+}
+
+.al-loading {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+  background: #060912; color: #9fb0c8;
+}
+.al-spinner {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.15); border-top-color: #29e6b7;
+  animation: al-spin .8s linear infinite;
+}
+@keyframes al-spin { to { transform: rotate(360deg); } }
+
+/* HERO */
+.al-hero {
+  position: relative; min-height: 340px;
+  padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
+  background-size: cover; background-position: center;
+  background-color: #12203a;
+}
+.al-hero-ov {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(6,9,18,.20) 0%, rgba(6,9,18,.55) 55%, rgba(6,9,18,.96) 100%);
+}
+.al-hero-top, .al-hero-btm { position: relative; z-index: 2; }
+.al-hero-top { display: flex; justify-content: space-between; }
+.al-icon {
+  width: 42px; height: 42px; border-radius: 14px; cursor: pointer;
+  background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.16);
+  color: #fff; font-size: 18px; backdrop-filter: blur(8px);
+}
+.al-live {
+  display: inline-flex; align-items: center; gap: 8px; width: max-content;
+  padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: .08em;
+  background: rgba(41,230,183,.16); border: 1px solid rgba(41,230,183,.4); color: #d8fff5;
+  margin-bottom: 12px;
+}
+.al-dot { width: 8px; height: 8px; border-radius: 50%; background: #29e6b7; box-shadow: 0 0 12px #29e6b7; }
+.al-name { font-size: 40px; line-height: .96; letter-spacing: -.04em; margin: 0 0 10px; }
+.al-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.al-tag {
+  padding: 7px 11px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14);
+}
+
+/* QUICK ACTIONS */
+.al-actions { display: grid; gap: 10px; padding: 16px; }
+.al-act {
+  min-height: 56px; border-radius: 16px; cursor: pointer; color: #fff;
+  border: 1px solid rgba(255,255,255,.12); font-weight: 800; font-size: 16px;
+  display: flex; align-items: center; gap: 10px; padding: 0 18px;
+}
+.al-act span { font-size: 20px; }
+.al-act-req  { background: linear-gradient(135deg, #1f9d57, #12b34c); }
+.al-act-sh   { background: linear-gradient(135deg, #7c4dff, #a855f7); }
+.al-act-tip  { background: linear-gradient(135deg, #f0a51c, #ff7a1a); color: #1b1200; }
+.al-act.on { outline: 2px solid rgba(255,255,255,.5); }
+
+.al-body { padding: 0 16px; display: grid; gap: 14px; }
+
+/* action panel (expanded) */
+.al-panel {
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 16px;
+}
+.al-panel-req { border-color: rgba(31,157,87,.4); }
+.al-panel-sh  { border-color: rgba(124,77,255,.4); }
+.al-panel-tip { border-color: rgba(240,165,28,.4); }
+.al-panel-title { font-size: 20px; font-weight: 900; margin-bottom: 12px; letter-spacing: -.02em; }
+.al-in {
+  width: 100%; box-sizing: border-box; margin-top: 10px;
+  background: #0b1424; border: 1px solid rgba(255,255,255,.14); border-radius: 14px;
+  padding: 13px; color: #fff; font-size: 16px; outline: none;
+}
+.al-ta { min-height: 78px; resize: vertical; }
+.al-songs, .al-examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.al-song, .al-ex {
+  padding: 9px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 700;
+  background: #111a2e; border: 1px solid rgba(255,255,255,.14); color: #dbe3f2;
+}
+.al-song.on { background: rgba(41,230,183,.2); border-color: #29e6b7; color: #d8fff5; }
+.al-amounts { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 12px; }
+.al-amt {
+  padding: 12px 0; border-radius: 14px; cursor: pointer; font-weight: 900; font-size: 15px;
+  background: #111a2e; border: 1px solid rgba(255,255,255,.14); color: #fff;
+}
+.al-amt.on { background: rgba(255,255,255,.16); outline: 1px solid rgba(255,255,255,.4); }
+.al-pay { display: grid; gap: 10px; margin-top: 12px; }
+.al-pay-btn { min-height: 52px; border-radius: 15px; border: none; cursor: pointer; font-weight: 900; font-size: 16px; }
+.al-cash  { background: #00d632; color: #04120a; }
+.al-venmo { background: #3d95ce; color: #fff; }
+.al-nopay { margin-top: 12px; color: #ffcf8a; font-size: 13px; line-height: 1.4; }
+.al-sent  { margin-top: 12px; color: #b9ffd0; font-size: 13px; line-height: 1.4; }
+
+/* cards */
+.al-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+  border: 1px solid rgba(255,255,255,.1); border-radius: 20px; padding: 16px;
+}
+.al-label {
+  font-size: 12px; text-transform: uppercase; letter-spacing: .13em;
+  color: #7af5d8; font-weight: 900; margin-bottom: 10px;
+}
+.al-bio { color: #aeb9cd; font-size: 14px; line-height: 1.6; margin: 0; }
+.al-show-venue { font-size: 18px; font-weight: 800; }
+.al-show-meta { color: #9fb0c8; font-size: 13px; margin-top: 4px; }
+
+/* queue */
+.al-queue { display: grid; gap: 8px; }
+.al-q { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+  background: #0b1424; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 11px 12px; }
+.al-q-rank { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,.08);
+  display: grid; place-items: center; font-weight: 900; font-size: 13px; }
+.al-q-song b { font-size: 14px; } .al-q-song span { color: #9fb0c8; font-size: 13px; }
+.al-q-amt { font-weight: 900; color: #7af5d8; }
+
+/* links */
+.al-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.al-link {
+  padding: 12px 14px; border-radius: 14px; text-decoration: none; color: #e9f2ff; font-weight: 800; font-size: 14px;
+  background: #111a2e; border: 1px solid rgba(255,255,255,.14);
+}
+
+.al-footer { text-align: center; color: #5f6b84; font-size: 12px; padding: 24px 16px 0; }

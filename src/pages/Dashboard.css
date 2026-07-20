@@ -1,0 +1,63 @@
+
+/* ── Calendar & Availability editor ─────────────────────────── */
+.cal-editor .cal-sub { color: var(--text2, #64748b); font-size: 14px; margin: 2px 0 14px; }
+.cal-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.cal-card h3 { margin: 0 0 12px; font-size: 15px; }
+.cal-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cal-form select, .cal-form input {
+  padding: 10px 12px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  font-size: 14px;
+  background: var(--bg, #fff);
+  color: var(--text, #1a2433);
+}
+.cal-form input { flex: 1; min-width: 200px; }
+.cal-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary, #0b7a75);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cal-btn:disabled { opacity: .6; cursor: default; }
+.cal-msg { margin-top: 10px; font-size: 13px; color: var(--primary, #0b7a75); }
+
+.cal-feeds { display: grid; gap: 8px; }
+.cal-feed {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.cal-feed-main { display: flex; flex-direction: column; gap: 2px; }
+.cal-feed-unit { font-size: 12px; color: var(--text2, #64748b); }
+.cal-feed-status { font-size: 12px; color: var(--text3, #94a3b8); }
+.cal-feed-actions { display: flex; gap: 6px; }
+.cal-feed-actions button {
+  padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;
+  border: 1px solid var(--border, #e2e8f0); background: var(--bg, #f7f9fc); color: var(--text, #1a2433);
+}
+.cal-feed-actions button.danger { color: #c0392b; border-color: #f0c9c4; }
+
+.cal-url-row { display: flex; gap: 8px; }
+.cal-url-row input {
+  flex: 1; padding: 10px 12px; font-size: 13px;
+  border: 1px solid var(--border, #e2e8f0); border-radius: 10px;
+  background: var(--bg, #f7f9fc); color: var(--text2, #64748b);
+}
+.cal-cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cal-cal-head h3 { margin: 0; }
+.cal-cal-head select {
+  padding: 8px 12px; border: 1px solid var(--border, #e2e8f0); border-radius: 10px;
+  font-size: 14px; background: var(--bg, #fff); color: var(--text, #1a2433);
+}

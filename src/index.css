@@ -1,0 +1,263 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  /* Without this, WebKit/Blink can auto-boost font sizes in narrow flex
+     columns ("text inflation") independent of any font-size the CSS
+     actually specifies — every font-size in this app is an intentional
+     px value, never let the browser override it. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+:root {
+  --bg: #f7f9fc;
+  --bg1: #ffffff;
+  --bg2: #f0f4f8;
+  --bg3: #e8edf3;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --primary: #0b7a75;
+  --primary-dark: #065f5b;
+  --accent: #0b7a75;
+  --green: #22c55e;
+  --red: #ef4444;
+  --ink: #1a2433;
+  --text: #1a2433;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --max-w: 430px;
+}
+
+html, body {
+  background: #fff;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Fixed-position elements (GCRHeader, FABs, etc) aren't contained by
+     #root's overflow-x:clip, so a single overflowing fixed element could
+     still push the whole page into a horizontal scroll with no visible
+     scrollbar, silently shifting content off the right edge. This is the
+     true outermost clip. */
+  overflow-x: clip;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  /* clip, not hidden: overflow-x:hidden forces the browser to also treat
+     overflow-y as auto (per the CSS overflow spec, a non-visible value on
+     one axis converts a visible value on the other to auto), which quietly
+     turns #root into a scroll container that never actually scrolls —
+     breaking position:sticky for every descendant in the app, since sticky
+     elements then anchor to #root's (frozen) scrollport instead of the
+     viewport. overflow-x:clip blocks the same horizontal bleed without
+     that side effect. */
+  overflow-x: clip;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  background: #fff;
+  padding-top: var(--gcr-header-h, 148px);
+}
+
+.app-shell.no-header {
+  padding-top: 0;
+}
+
+/* ── Global page-wrapper header offset ──────────────────────
+   Every page component wraps its content in a top-level div.
+   The app-shell already has padding-top = header height, so
+   these inner wrappers must NOT add their own offset — but they
+   also must not collapse the app-shell padding by going
+   position:absolute or having overflow issues.
+   If any page wrapper accidentally resets the offset, this
+   ensures they all respect the header clearance.
+──────────────────────────────────────────────────────────── */
+.detail-page,
+.artist-listings-container,
+.auth-page,
+.book-container,
+.browse-container,
+.building-page,
+.category-page,
+.confirmation-container,
+.deals-page,
+.events-page,
+.group-page,
+.home-page,
+.itin-page,
+.landing-page,
+.list-page,
+.profile-page,
+.staying-page,
+.saves-page,
+.search-page,
+.services-page,
+.setup-page,
+.swipe-page,
+.restaurant-menu-page,
+.service-detail-page,
+.rental-detail-page,
+.artist-profile-page {
+  /* pages sit inside .app-shell which already clears the header.
+     Override any accidental negative margin or position:absolute
+     that would cause content to slide under the fixed header. */
+  position: relative;
+}
+
+button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+input { outline: none; font-family: inherit; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  width: 100%;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 24px rgba(124,106,247,0.35);
+}
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-outline {
+  background: rgba(255,255,255,0.06);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  border: 1.5px solid var(--border);
+  transition: all 0.2s;
+}
+
+.btn-green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(34,197,94,0.3);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-red {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(239,68,68,0.3);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+}
+.safe-top { padding-top: calc(20px + env(safe-area-inset-top)); }
+.safe-bottom { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-live { background: rgba(239,68,68,0.2); color: #fca5a5; }
+.badge-happy { background: rgba(251,146,60,0.2); color: #fdba74; }
+.badge-music { background: rgba(124,106,247,0.2); color: #c4b5fd; }
+.badge-verified { background: rgba(34,197,94,0.15); color: #86efac; }
+.badge-waterfront { background: rgba(56,189,248,0.15); color: #7dd3fc; }
+.badge-status-open { background: rgba(34,197,94,0.2); color: #86efac; }
+.badge-status-opening { background: rgba(56,189,248,0.2); color: #7dd3fc; }
+.badge-status-closing { background: rgba(251,146,60,0.2); color: #fdba74; }
+.badge-status-closed { background: rgba(148,163,184,0.2); color: #cbd5e1; }
+
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  background: rgba(10,10,20,0.85);
+  backdrop-filter: blur(20px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7c6af7, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 20px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-up { animation: fadeUp 0.4s ease forwards; }
+
+.grecaptcha-badge { visibility: hidden !important; }

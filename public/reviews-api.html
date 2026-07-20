@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberCheck Reviews API — add verified reviews to any site</title>
+<!--
+  DEVELOPER SANDBOX + DOCS for the CyberCheck Reviews API.
+  Enter a business slug → see the live JSON, the rendered widget,
+  and copy-paste embed snippets. Standalone static page.
+-->
+<style>
+  :root{ --bg:#f5f7f6; --panel:#fff; --ink:#0c141a; --mut:#5a6a72; --line:#dde4e1;
+    --accent:#0f9d84; --code-bg:#0d141b; --code-fg:#d7e4dd; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+  @media(prefers-color-scheme:dark){ :root{ --bg:#080c11; --panel:#0f151d; --ink:#e8edf0; --mut:#8fa0ab; --line:#1e2a34; --accent:#18c6a8; --code-bg:#0a0f14; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  header{border-bottom:1px solid var(--line);background:var(--panel)}
+  .hd{display:flex;align-items:center;gap:11px;padding:16px 0}
+  .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0b2f2a);display:grid;place-items:center;color:#fff;font-weight:900}
+  .hd b{font-size:17px;letter-spacing:-.02em}
+  .hd .tag{font-family:var(--mono);font-size:11px;color:var(--mut);margin-left:auto;letter-spacing:.05em}
+  h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;margin:34px 0 10px;text-wrap:balance}
+  .lead{font-size:18px;color:var(--mut);max-width:60ch;margin:0 0 8px}
+  h2{font-size:22px;letter-spacing:-.02em;margin:40px 0 12px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:14px}
+  label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);display:block;margin-bottom:6px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  input,select{font:inherit;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-width:180px}
+  .btn{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 20px;background:var(--accent);color:#fff;cursor:pointer}
+  .btn.sec{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){ .grid2{grid-template-columns:1fr} }
+  pre{background:var(--code-bg);color:var(--code-fg);border-radius:12px;padding:15px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.55;margin:0}
+  .code-wrap{position:relative}
+  .copy{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.1);color:#cfe;border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:5px 9px;cursor:pointer}
+  .copy:hover{background:rgba(255,255,255,.2)}
+  .prev{min-height:80px}
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+  td code{font-family:var(--mono);font-size:12.5px;color:var(--accent)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:6px}
+  .muted{color:var(--mut);font-size:14px}
+  footer{margin:50px 0 30px;padding-top:20px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><div class="wrap hd"><span class="mark">C</span><b>CyberCheck Reviews API</b><span class="tag">v1 · public · CORS enabled</span></div></header>
+
+<main class="wrap">
+  <span class="eyebrow" style="display:block;margin-top:34px">Developer sandbox</span>
+  <h1>Put verified reviews on any website.</h1>
+  <p class="lead">Every CyberCheck review is tied to a real, completed transaction — so it's provably genuine. Pull them into your own site with one line of HTML, or hit the JSON API directly. No key required for public reviews.</p>
+
+  <!-- SANDBOX -->
+  <div class="panel">
+    <label for="slug">Try it — enter a business slug</label>
+    <div class="row">
+      <input id="slug" value="beachside-circle-boats" placeholder="business-slug" autocomplete="off">
+      <select id="layout"><option value="list">Full list</option><option value="badge">Compact badge</option></select>
+      <select id="theme"><option value="auto">Auto theme</option><option value="light">Light</option><option value="dark">Dark</option></select>
+      <button class="btn" onclick="run()">Load reviews →</button>
+    </div>
+    <p class="muted" id="hint" style="margin:10px 0 0">Tip: your slug is the last part of your page URL — <code>gulfcoastradar.com/p/<b>your-slug</b></code>.</p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h2>Live widget</h2>
+      <div class="panel prev" id="preview"><span class="muted">Load a slug to preview the embed.</span></div>
+    </div>
+    <div>
+      <h2>API response</h2>
+      <div class="code-wrap"><button class="copy" onclick="copyEl('json')">Copy</button><pre id="json">// GET the endpoint to see JSON</pre></div>
+    </div>
+  </div>
+
+  <!-- EMBED SNIPPETS -->
+  <h2>Copy the embed</h2>
+  <p class="muted">Paste this where you want the reviews to appear. It renders itself — no build step, no framework.</p>
+  <div class="code-wrap"><button class="copy" onclick="copyEl('snippet')">Copy</button><pre id="snippet"></pre></div>
+
+  <h2>Compact star badge</h2>
+  <p class="muted">A one-line trust badge — great for a header or footer. Links to the full review wall.</p>
+  <div class="code-wrap"><button class="copy" onclick="copyEl('snippet-badge')">Copy</button><pre id="snippet-badge"></pre></div>
+
+  <!-- RAW API -->
+  <h2>Or call the API directly</h2>
+  <div class="code-wrap"><button class="copy" onclick="copyEl('endpoint')">Copy</button><pre id="endpoint"></pre></div>
+
+  <h3 style="margin:22px 0 4px;font-size:16px">Response fields</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>average</code></td><td>number</td><td>Mean star rating (1 decimal).</td></tr>
+      <tr><td><code>count</code></td><td>number</td><td>Total published reviews.</td></tr>
+      <tr><td><code>verified_count</code></td><td>number</td><td>Reviews tied to a completed transaction.</td></tr>
+      <tr><td><code>reviews[]</code></td><td>array</td><td><code>name</code>, <code>stars</code>, <code>text</code>, <code>badge</code> (<span class="pill">Verified Booking</span> / Unverified Opinion), <code>when</code> (ISO date).</td></tr>
+      <tr><td><code>business</code></td><td>object</td><td><code>name</code>, <code>slug</code>, <code>emoji</code>, <code>tagline</code>, <code>accent</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:26px 0 4px;font-size:16px">Embed options</h3>
+  <table>
+    <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>data-slug</code></td><td>—</td><td>Business slug (required).</td></tr>
+      <tr><td><code>data-layout</code></td><td>list</td><td><code>list</code> or <code>badge</code>.</td></tr>
+      <tr><td><code>data-theme</code></td><td>auto</td><td><code>light</code>, <code>dark</code>, or <code>auto</code>.</td></tr>
+      <tr><td><code>data-max</code></td><td>6</td><td>Max reviews shown.</td></tr>
+      <tr><td><code>data-accent</code></td><td>#0f9d84</td><td>Accent color for badges.</td></tr>
+      <tr><td><code>data-target</code></td><td>inline</td><td>Element id to render into.</td></tr>
+    </tbody>
+  </table>
+</main>
+
+<footer class="wrap">CyberCheck Reviews · one platform for verified reviews across every business. Reviews you can trust because they provably happened.</footer>
+
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+var EMBED_HOST = location.origin; // this page serves reviews-embed.js from the same host
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function copyEl(id){ var t=document.getElementById(id).textContent; navigator.clipboard.writeText(t).then(function(){ toastCopy(); }); }
+function toastCopy(){ var d=document.createElement('div'); d.textContent='Copied ✓'; d.style.cssText='position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:9px 16px;border-radius:10px;font-weight:700;z-index:9;font-size:13px'; document.body.appendChild(d); setTimeout(function(){ d.remove(); },1200); }
+
+function snippets(slug, layout, theme){
+  var s = EMBED_HOST + '/reviews-embed.js';
+  document.getElementById('snippet').textContent =
+    '<script src="'+s+'"\n        data-slug="'+slug+'"'+(layout==='badge'?'\n        data-layout="badge"':'')+(theme!=='auto'?'\n        data-theme="'+theme+'"':'')+'><\/script>';
+  document.getElementById('snippet-badge').textContent =
+    '<script src="'+s+'"\n        data-slug="'+slug+'"\n        data-layout="badge"><\/script>';
+  document.getElementById('endpoint').textContent =
+    'GET '+API+'/api/platform/reviews/'+slug+'\n\ncurl '+API+'/api/platform/reviews/'+slug;
+}
+
+function run(){
+  var slug=(document.getElementById('slug').value||'').trim();
+  var layout=document.getElementById('layout').value;
+  var theme=document.getElementById('theme').value;
+  if(!slug) return;
+  snippets(slug, layout, theme);
+
+  // JSON
+  var pre=document.getElementById('json'); pre.textContent='// loading…';
+  fetch(API+'/api/platform/reviews/'+encodeURIComponent(slug))
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(res){ pre.textContent = res.ok ? JSON.stringify(res.d,null,2) : '// '+((res.d&&res.d.error)||'Not found'); })
+    .catch(function(){ pre.textContent='// request failed'; });
+
+  // live widget — re-inject the embed script fresh each run
+  var host=document.getElementById('preview'); host.innerHTML='';
+  var sc=document.createElement('script');
+  sc.src=EMBED_HOST+'/reviews-embed.js';
+  sc.setAttribute('data-slug',slug);
+  sc.setAttribute('data-target','preview');
+  sc.setAttribute('data-api',API);
+  if(layout!=='list') sc.setAttribute('data-layout',layout);
+  if(theme!=='auto') sc.setAttribute('data-theme',theme);
+  host.appendChild(sc);
+}
+snippets('beachside-circle-boats','list','auto');
+run();
+</script>
+</body>
+</html>

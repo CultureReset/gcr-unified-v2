@@ -1,0 +1,155 @@
+.live-feed-page {
+  min-height: 100vh;
+  background: #0a0f1e;
+  color: #fff;
+  /* Clears BottomNav + the "Ask a local" FAB + the install banner (see
+     InstallBanner.jsx / AiChat.css) so the last card isn't hidden behind them. */
+  padding-bottom: 210px;
+}
+
+.live-feed-header {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 16px;
+}
+
+.live-feed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239,68,68,.15);
+  border: 1px solid rgba(239,68,68,.4);
+  color: #f87171;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+.live-feed-header h1 {
+  font-size: 26px;
+  font-weight: 900;
+  margin: 0 0 4px;
+  color: #fff;
+}
+
+.live-feed-header p {
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  margin: 0;
+}
+
+.live-feed-loading {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feed-skeleton {
+  height: 400px;
+  background: linear-gradient(90deg, #1e293b 25%, #263347 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 16px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.live-feed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 12px;
+  color: rgba(255,255,255,.4);
+  font-size: 15px;
+}
+
+/* ── Feed posts ─────────────────────────────────────── */
+.feed-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feed-post {
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding: 16px 0 20px;
+}
+
+.feed-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.feed-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+}
+
+.feed-biz-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.feed-date {
+  font-size: 12px;
+  color: rgba(255,255,255,.35);
+  margin-left: auto;
+}
+
+/* ── iFrame embed ───────────────────────────────────── */
+.feed-embed-wrap {
+  width: 100%;
+  background: #111827;
+  /* Let the iframe determine its own height via aspect ratio */
+  position: relative;
+}
+
+/* Instagram posts are roughly square; Reels are 9:16 */
+.feed-embed-wrap iframe.feed-embed {
+  width: 100%;
+  min-height: 480px;
+  max-height: 700px;
+  border: none;
+  display: block;
+}
+
+.feed-caption {
+  padding: 10px 16px 0;
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.5;
+}
+
+.feed-end {
+  text-align: center;
+  padding: 32px 20px;
+  font-size: 14px;
+  color: rgba(255,255,255,.3);
+}

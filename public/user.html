@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading…</title>
+<!--
+  PUBLIC USER SHARE PAGE — /u/<code>. A tourist's own link-tree:
+  the places they've actually been (completed bookings only), each
+  link carrying their referral code so they earn points when a
+  booking converts. Shown ONLY if the user enabled sharing.
+  Standalone static page — not part of the React app.
+-->
+<style>
+  :root{ --accent:#0f9d84; --text:#1d2329; --muted:#66758a; --soft:#f6f4f0; --line:#e6e0d8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#efece7;color:var(--text);min-height:100vh;padding:18px 12px}
+  .shell{max-width:520px;margin:0 auto;background:#f9f7f4;border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(35,28,22,.14)}
+  .hero{padding:32px 22px 24px;color:#fff;text-align:center;background:linear-gradient(160deg,var(--accent),#1c2b40)}
+  .badge{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+  .hero h1{margin:14px 0 4px;font-size:26px;letter-spacing:-.03em}
+  .hero p{margin:0;font-size:13.5px;opacity:.92}
+  .links{padding:18px;display:flex;flex-direction:column;gap:11px}
+  .lk{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px 14px;text-decoration:none;color:var(--text);transition:transform .15s}
+  .lk:hover{transform:translateY(-2px)}
+  .lk .i{width:46px;height:46px;border-radius:13px;background:var(--soft);display:grid;place-items:center;font-size:21px;flex-shrink:0}
+  .lk b{font-size:15px;display:block}
+  .lk span{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+  .lk .ar{margin-left:auto;color:#a0a8b5;font-size:19px}
+  .foot{text-align:center;color:#9a8f83;font-size:11.5px;padding:4px 18px 22px;line-height:1.5}
+  .center{min-height:70vh;display:grid;place-items:center;color:#8a8074;font-weight:700}
+</style>
+</head>
+<body>
+<div id="root" class="center">Loading…</div>
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var code = (location.pathname.match(/\/u\/([a-zA-Z0-9-]+)/) || [])[1] || new URLSearchParams(location.search).get('c');
+if(!code){ document.getElementById('root').textContent = 'No page specified.'; }
+else fetch(API + '/api/platform/u/' + encodeURIComponent(code))
+  .then(function(r){ if(!r.ok) throw new Error('Page not found'); return r.json(); })
+  .then(function(d){
+    document.title = d.name + "'s Gulf Coast picks";
+    var rows = (d.businesses||[]).map(function(b){
+      return '<a class="lk" href="/p/'+encodeURIComponent(b.slug)+'?ref='+encodeURIComponent(d.ref_code)+'">'+
+        '<div class="i">'+esc(b.emoji)+'</div>'+
+        '<div><b>'+esc(b.name)+'</b><span>'+esc(b.tagline||'Book through my link')+'</span></div>'+
+        '<span class="ar">›</span></a>';
+    }).join('');
+    document.getElementById('root').className='';
+    document.getElementById('root').innerHTML =
+      '<div class="shell">'+
+        '<div class="hero"><span class="badge">✓ Verified visits</span>'+
+        '<h1>'+esc(d.name)+"'s picks</h1>"+
+        '<p>Places I\'ve actually been on the Gulf Coast — book through my links!</p></div>'+
+        '<div class="links">'+(rows || '<div style="text-align:center;color:#9a8f83;padding:16px">Nothing shared yet.</div>')+'</div>'+
+        '<div class="foot">Every pick is backed by a real completed booking.<br>Powered by <b>CyberCheck</b> · Gulf Coast Radar</div>'+
+      '</div>';
+  })
+  .catch(function(e){ document.getElementById('root').textContent = e.message; });
+</script>
+</body>
+</html>

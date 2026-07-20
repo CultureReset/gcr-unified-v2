@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Leave a Review</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #f8f9fa; --card: #ffffff; --border: #e2e8f0;
+  --text: #1a202c; --muted: #718096; --primary: #0096c7;
+  --green: #38a169; --red: #e53e3e; --gold: #f59e0b;
+  --radius: 16px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px 48px; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; width: 100%; max-width: 480px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+
+/* HEADER */
+.platform-tag { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+.platform-tag::before, .platform-tag::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.biz-name { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+.biz-sub { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 24px; }
+
+/* VISIT INFO */
+.visit-chip { display: inline-flex; align-items: center; gap: 6px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #0369a1; font-weight: 500; margin: 0 4px 8px; }
+.visit-chips { text-align: center; margin-bottom: 22px; display: none; }
+
+/* STARS */
+.stars-label { font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 14px; }
+.stars-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.star { font-size: 46px; cursor: pointer; transition: transform 0.1s; line-height: 1; filter: grayscale(1) opacity(0.25); }
+.star.lit { filter: none; }
+.star:active { transform: scale(0.88); }
+.stars-hint { text-align: center; font-size: 13px; color: var(--muted); min-height: 20px; margin-bottom: 22px; }
+
+/* PER-ITEM */
+.items-section { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; display: none; }
+.items-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.item-row:last-child { border-bottom: none; }
+.item-name { font-size: 14px; font-weight: 500; }
+.item-stars { display: flex; gap: 3px; }
+.item-star { font-size: 20px; cursor: pointer; filter: grayscale(1) opacity(0.25); transition: filter 0.1s; }
+.item-star.lit { filter: none; }
+
+/* TEXT */
+.text-section { display: none; margin-bottom: 4px; }
+.text-label { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.text-label span { font-weight: 400; color: var(--muted); }
+textarea { width: 100%; min-height: 110px; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--font); font-size: 14px; color: var(--text); resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.55; }
+textarea:focus { border-color: var(--primary); }
+textarea::placeholder { color: #a0aec0; }
+
+/* SUBMIT */
+.submit-btn { display: block; width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: opacity 0.15s; }
+.submit-btn:active { opacity: 0.85; }
+.submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* SUCCESS */
+.success-screen { display: none; text-align: center; padding: 8px 0; }
+.success-icon { font-size: 72px; margin-bottom: 16px; }
+.success-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+.success-body { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+.success-where { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 16px; margin-bottom: 20px; font-size: 13px; color: #0369a1; line-height: 1.6; }
+.success-where strong { color: var(--text); display: block; margin-bottom: 6px; font-size: 13px; }
+.google-nudge { font-size: 12px; color: var(--muted); margin-top: 16px; }
+.google-nudge a { color: var(--primary); }
+
+/* STATES */
+.error-msg { color: var(--red); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
+.loader { text-align: center; padding: 60px 0; }
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.expired-card { text-align: center; padding: 12px 0; }
+</style>
+</head>
+<body>
+
+<div id="loader" class="card loader">
+  <div class="spinner"></div>
+  <div style="color:#718096;font-size:14px;">Loading…</div>
+</div>
+
+<div id="main" class="card" style="display:none;">
+
+  <!-- HEADER -->
+  <div class="platform-tag">CyberCheck Reviews</div>
+  <div class="biz-name" id="biz-name">Leave a Review</div>
+  <div class="biz-sub" id="biz-sub">Your feedback helps real people make great decisions</div>
+
+  <!-- VISIT CHIPS -->
+  <div class="visit-chips" id="visit-chips"></div>
+
+  <!-- FORM -->
+  <div id="form-section">
+    <div class="stars-label">How was your overall experience?</div>
+    <div class="stars-row" id="stars-row">
+      <span class="star" data-v="1">⭐</span>
+      <span class="star" data-v="2">⭐</span>
+      <span class="star" data-v="3">⭐</span>
+      <span class="star" data-v="4">⭐</span>
+      <span class="star" data-v="5">⭐</span>
+    </div>
+    <div class="stars-hint" id="stars-hint">Tap a star to rate</div>
+
+    <!-- Per-item ratings -->
+    <div class="items-section" id="items-section">
+      <div class="items-label">Rate what you had</div>
+      <div id="items-list"></div>
+    </div>
+
+    <!-- Written review -->
+    <div class="text-section" id="text-section">
+      <div class="text-label" id="text-label">Tell us more <span>(optional)</span></div>
+      <textarea id="review-text"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" disabled>Submit My Review</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon" id="success-icon">🙏</div>
+    <div class="success-title" id="success-title">Thank you!</div>
+    <div class="success-body" id="success-body">Your review has been saved.</div>
+    <div class="success-where" id="success-where" style="display:none;">
+      <strong>Your review has been saved.</strong>
+      <div>✓ The business owner can see your feedback</div>
+      <div>✓ It helps future customers make better decisions</div>
+    </div>
+    <div class="google-nudge" id="google-nudge" style="display:none;">
+      Want to also share on Google? <a id="google-link" href="#" target="_blank">Leave a Google review →</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API   = 'https://gcr-api-clean.vercel.app';
+const token = new URLSearchParams(location.search).get('t');
+
+let _rating      = 0;
+let _itemRatings = {};
+let _requestData = null;
+
+const hints = ['','That bad? We\'re sorry 😞','We can do better — thanks for telling us','Good to know! Tell us more','Great! So glad you had a good time','Amazing! You made our day 🌟'];
+
+async function init() {
+  if (!token) { showExpired('Invalid link', 'This review link appears to be incomplete.'); return; }
+  try {
+    const r = await fetch(`${API}/api/reviews/request/${token}`);
+    if (!r.ok) { showExpired('Already submitted', 'This review has already been received. Thank you!'); return; }
+    const d = await r.json();
+    _requestData = d;
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('main').style.display   = '';
+    populate(d);
+  } catch (e) {
+    showExpired('Connection error', 'Could not load. Please check your connection and try again.');
+  }
+}
+
+function populate(d) {
+  document.title = `Review ${d.business_name || 'Your Visit'}`;
+  document.getElementById('biz-name').textContent = d.business_name || 'Leave a Review';
+  const first = d.customer_name ? d.customer_name.split(' ')[0] : '';
+  document.getElementById('biz-sub').textContent = first
+    ? `Hey ${first}! We'd love to hear about your visit.`
+    : 'We\'d love to hear about your visit.';
+
+  // Visit context chips
+  const chips = [];
+  if (d.visit_date) {
+    const dt = new Date(d.visit_date + 'T12:00:00');
+    chips.push('📅 ' + dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+  }
+  if (d.table_number) chips.push('🪑 Table ' + d.table_number);
+  const items = d.items_ordered || [];
+  if (items.length) {
+    const names = items.slice(0, 2).map(i => i.name || i.item_name || i).filter(Boolean);
+    if (names.length) chips.push('🍽️ ' + names.join(' · ') + (items.length > 2 ? ' +' + (items.length - 2) : ''));
+  }
+  if (chips.length) {
+    const chipsEl = document.getElementById('visit-chips');
+    chipsEl.innerHTML = chips.map(c => `<span class="visit-chip">${esc(c)}</span>`).join('');
+    chipsEl.style.display = '';
+  }
+
+  // Per-item ratings (up to 6 items)
+  if (items.length > 0 && items.length <= 6) {
+    const list = document.getElementById('items-list');
+    items.forEach((item, idx) => {
+      const name = item.name || item.item_name || item;
+      if (!name) return;
+      _itemRatings[idx] = 0;
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `<div class="item-name">${esc(String(name))}</div>
+        <div class="item-stars">
+          ${[1,2,3,4,5].map(v => `<span class="item-star" data-v="${v}" data-idx="${idx}">⭐</span>`).join('')}
+        </div>`;
+      list.appendChild(row);
+    });
+    document.querySelectorAll('.item-star').forEach(s => {
+      s.addEventListener('click', () => setItemStar(+s.dataset.idx, +s.dataset.v));
+    });
+    document.getElementById('items-section').style.display = '';
+  }
+
+  document.querySelectorAll('#stars-row .star').forEach(s => {
+    s.addEventListener('click', () => setRating(+s.dataset.v));
+  });
+  document.getElementById('submit-btn').addEventListener('click', submit);
+}
+
+function setRating(v) {
+  _rating = v;
+  document.querySelectorAll('#stars-row .star').forEach(s => s.classList.toggle('lit', +s.dataset.v <= v));
+  document.getElementById('stars-hint').textContent = hints[v] || '';
+  const ts = document.getElementById('text-section');
+  ts.style.display = '';
+  document.getElementById('review-text').placeholder = v >= 4
+    ? 'What stood out? Anything we can do even better?'
+    : 'What could we have done better? The owner reads every reply personally.';
+  document.getElementById('submit-btn').disabled = false;
+}
+
+function setItemStar(idx, v) {
+  _itemRatings[idx] = v;
+  document.querySelectorAll(`.item-star[data-idx="${idx}"]`).forEach(s => s.classList.toggle('lit', +s.dataset.v <= v));
+}
+
+async function submit() {
+  if (!_rating) return;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  try {
+    const r = await fetch(`${API}/api/reviews/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token,
+        rating:       _rating,
+        text:         document.getElementById('review-text').value.trim() || null,
+        items_feedback: _itemRatings,
+      })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Failed');
+    showSuccess(d.google_url);
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Submit My Review';
+    const el = document.getElementById('error-msg');
+    el.textContent = e.message || 'Something went wrong. Please try again.';
+    el.style.display = '';
+  }
+}
+
+function showSuccess(googleUrl) {
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('success-screen').style.display = '';
+
+  if (_rating >= 4) {
+    document.getElementById('success-icon').textContent  = _rating === 5 ? '🌟' : '😊';
+    document.getElementById('success-title').textContent = 'Review submitted — thank you!';
+    document.getElementById('success-body').textContent  = 'Your experience is now part of our review platform. Future visitors will see your honest feedback when choosing where to go.';
+    document.getElementById('success-where').style.display = '';
+    // Google is purely optional, small nudge at the bottom
+    if (googleUrl) {
+      document.getElementById('google-link').href = googleUrl;
+      document.getElementById('google-nudge').style.display = '';
+    }
+  } else {
+    document.getElementById('success-icon').textContent  = '🙏';
+    document.getElementById('success-title').textContent = 'We hear you — thank you';
+    document.getElementById('success-body').textContent  = 'Your feedback goes directly to the owner. We take every review seriously and will work to make it right. We hope to earn a better experience next time.';
+  }
+}
+
+function showExpired(title, sub) {
+  document.getElementById('loader').style.display = 'none';
+  const card = document.getElementById('main');
+  card.style.display = '';
+  card.innerHTML = `<div class="expired-card">
+    <div style="font-size:52px;margin-bottom:14px;">🔗</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:8px;">${esc(title)}</div>
+    <div style="font-size:14px;color:#718096;">${esc(sub)}</div>
+  </div>`;
+}
+
+function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
+init();
+</script>
+</body>
+</html>

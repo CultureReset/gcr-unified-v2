@@ -1,0 +1,442 @@
+.artist-profile {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40px;
+}
+
+.artist-hero {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.artist-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artist-hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 40px 20px 20px;
+  color: white;
+}
+
+.artist-hero-overlay h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.artist-profile-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 12px;
+}
+
+.bio {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.songs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.song-card {
+  background: #f9f9f9;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.song-card:hover {
+  background: #f5f5f5;
+  border-color: #667eea;
+}
+
+.song-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.song-artist {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.song-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-item {
+  background: #f9f9f9;
+  border-left: 4px solid #667eea;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.event-date {
+  font-weight: 600;
+  font-size: 14px;
+  color: #667eea;
+  margin-bottom: 6px;
+}
+
+.event-venue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.event-time {
+  font-size: 13px;
+  color: #666;
+}
+
+.contact-section {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border: 1px solid #667eea30;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.contact-btn {
+  padding: 14px 16px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  transition: all 0.2s;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.contact-btn:hover {
+  border-color: #667eea;
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.contact-btn.venmo {
+  border-color: #3d95ce;
+}
+
+.contact-btn.venmo:hover {
+  background: #3d95ce;
+  border-color: #3d95ce;
+}
+
+.contact-btn.cashapp {
+  border-color: #00d54b;
+}
+
+.contact-btn.cashapp:hover {
+  background: #00d54b;
+  border-color: #00d54b;
+}
+
+.contact-btn.instagram {
+  border-color: #e1306c;
+}
+
+.contact-btn.instagram:hover {
+  background: #e1306c;
+  border-color: #e1306c;
+}
+
+.contact-btn.spotify {
+  border-color: #1db954;
+}
+
+.contact-btn.spotify:hover {
+  background: #1db954;
+  border-color: #1db954;
+}
+
+.contact-btn.youtube {
+  border-color: #ff0000;
+}
+
+.contact-btn.youtube:hover {
+  background: #ff0000;
+  border-color: #ff0000;
+}
+
+.contact-btn.booking {
+  border-color: #667eea;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #764ba2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.artist-profile-loading,
+.artist-profile-error {
+  padding: 60px 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  min-height: 100vh;
+}
+
+.artist-profile-error {
+  color: #d32f2f;
+}
+
+@media (max-width: 768px) {
+  .artist-hero {
+    height: 200px;
+  }
+
+  .artist-hero-overlay h1 {
+    font-size: 28px;
+  }
+
+  .artist-profile-content {
+    padding: 20px 16px;
+  }
+
+  .section {
+    padding: 16px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+  }
+
+  .songs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+/* Tabs */
+.artist-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  scrollbar-width: none;
+}
+.artist-tabs::-webkit-scrollbar { display: none; }
+.artist-tab {
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.artist-tab.active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
+
+/* Quick links row */
+.artist-quick-links {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff;
+  scrollbar-width: none;
+}
+.artist-quick-links::-webkit-scrollbar { display: none; }
+.artist-quick-btn {
+  white-space: nowrap;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Section */
+.artist-section { padding: 20px 16px; max-width: 700px; margin: 0 auto; }
+.artist-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+
+/* Back btn */
+.back-btn-artist {
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+/* Hero meta */
+.artist-hero-meta { display: flex; gap: 16px; font-size: 14px; opacity: 0.9; margin-top: 6px; }
+
+/* Book button */
+.artist-book-btn {
+  display: inline-block;
+  background: #0ea5e9;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+/* Booking form */
+.booking-form { display: flex; flex-direction: column; gap: 12px; }
+.booking-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+.book-btn {
+  background: #0ea5e9;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.book-btn:disabled { opacity: 0.5; cursor: default; }
+.booking-status.success { background: #d1fae5; color: #065f46; padding: 16px; border-radius: 10px; }
+.booking-status.error { background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 10px; }
+
+/* Reviews */
+.review-stats { background: #f9f9f9; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.review-avg { font-size: 36px; font-weight: 800; }
+.review-count { color: #666; margin-bottom: 12px; }
+.review-bars { display: flex; flex-direction: column; gap: 6px; }
+.review-bar-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.review-bar { flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+.review-bar-fill { height: 100%; background: #f59e0b; border-radius: 4px; }
+.reviews-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+.review-card { background: #f9f9f9; border-radius: 12px; padding: 16px; }
+.review-header { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.reviewer-name { font-weight: 700; }
+.review-stars { color: #f59e0b; }
+.review-date { color: #999; font-size: 12px; margin-left: auto; }
+.review-title { font-weight: 600; margin-bottom: 4px; }
+.review-body { color: #555; font-size: 14px; }
+.no-reviews { color: #999; }
+.review-form h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.star-picker { display: flex; gap: 8px; margin-bottom: 12px; }
+.star-btn { font-size: 28px; background: none; border: none; cursor: pointer; color: #d1d5db; }
+.star-btn.active { color: #f59e0b; }
+.review-input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 10px; box-sizing: border-box; }
+.review-msg { padding: 10px; background: #f0fdf4; border-radius: 8px; color: #166534; margin-bottom: 10px; }
+.submit-review-btn { background: #0ea5e9; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; cursor: pointer; width: 100%; }
+.submit-review-btn:disabled { opacity: 0.5; }
+
+/* Gallery */
+.gallery-grid-preview { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.gallery-preview-img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; }
+.gallery-preview-img:hover { opacity: 0.85; }
+.gallery-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.gallery-pagination button { background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+.gallery-pagination button:disabled { opacity: 0.4; }
+
+/* Lightbox */
+.artist-lightbox {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; cursor: pointer;
+}
+.artist-lightbox img { max-width: 92vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
+.lightbox-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
+.lightbox-prev, .lightbox-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 24px; cursor: pointer; }
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+.lightbox-counter { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 14px; }

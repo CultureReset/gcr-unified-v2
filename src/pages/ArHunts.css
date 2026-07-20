@@ -1,0 +1,155 @@
+.ar-hunts-page {
+  background: var(--bg, #f7f9fc);
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+.ar-hunts-content {
+  max-width: var(--max-w, 430px);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ── Permission / empty / error states ── */
+.ar-permission-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius, 20px);
+  padding: 40px 24px;
+  text-align: center;
+  margin-top: 24px;
+}
+.ar-permission-icon { font-size: 48px; margin-bottom: 12px; }
+.ar-permission-card h2 { font-size: 1.25rem; font-weight: 800; margin: 0 0 8px; color: var(--ink, #1a2433); }
+.ar-permission-card p { color: var(--text2, #64748b); font-size: 0.92rem; line-height: 1.5; margin: 0 0 18px; }
+
+.ar-btn-primary {
+  background: var(--primary, #0b7a75);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 26px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.ar-btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ── Hunt grid ── */
+.ar-hunt-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.ar-hunt-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm, 12px);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  transition: opacity .2s;
+}
+.ar-hunt-card.is-captured { opacity: .55; }
+
+.ar-hunt-card-top {
+  position: relative;
+  height: 130px;
+  background: var(--bg2, #f0f4f8);
+}
+.ar-hunt-brand-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ar-hunt-brand-placeholder {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; background: var(--bg3, #e8edf3);
+}
+.ar-hunt-difficulty {
+  position: absolute; top: 10px; right: 10px;
+  color: #fff; font-size: 0.7rem; font-weight: 800;
+  padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em;
+}
+
+.ar-hunt-card-body { padding: 14px; }
+.ar-hunt-card-body h3 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 800; color: var(--ink, #1a2433); }
+.ar-hunt-hint {
+  font-size: 0.86rem; color: var(--text2, #64748b);
+  background: var(--bg2, #f0f4f8); border-radius: 10px;
+  padding: 8px 10px; margin: 0 0 10px; line-height: 1.4;
+}
+.ar-hunt-meta-row {
+  display: flex; gap: 14px; font-size: 0.82rem;
+  color: var(--text2, #64748b); font-weight: 600; margin-bottom: 12px;
+}
+
+.ar-hunt-captured-badge {
+  text-align: center; font-weight: 800; color: var(--green, #22c55e);
+  background: rgba(34,197,94,.1); border-radius: 999px; padding: 10px;
+}
+
+.ar-hunt-unavailable-badge {
+  text-align: center; font-weight: 700; color: var(--text3, #94a3b8);
+  background: var(--bg2, #f0f4f8); border-radius: 999px; padding: 10px;
+  font-size: 0.88rem;
+}
+
+.ar-hunt-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ar-btn-ar-view {
+  flex: 0 0 auto;
+  background: var(--bg2, #f0f4f8);
+  color: var(--ink, #1a2433);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 999px;
+  padding: 12px 14px;
+  font-weight: 800;
+  font-size: 0.86rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ar-btn-capture {
+  flex: 1;
+  width: 100%;
+  background: var(--bg3, #e8edf3);
+  color: var(--text2, #64748b);
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: not-allowed;
+}
+.ar-btn-capture.is-ready {
+  background: var(--primary, #0b7a75);
+  color: #fff;
+  cursor: pointer;
+  animation: ar-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ar-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(11,122,117,.4); }
+  50% { box-shadow: 0 0 0 8px rgba(11,122,117,0); }
+}
+
+/* ── Reward modal ── */
+.ar-reward-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+}
+.ar-reward-modal {
+  background: #fff; border-radius: var(--radius, 20px);
+  padding: 32px 24px; text-align: center; max-width: 340px; width: 100%;
+}
+.ar-reward-icon { font-size: 56px; margin-bottom: 8px; }
+.ar-reward-modal h2 { font-size: 1.4rem; font-weight: 900; margin: 0 0 4px; color: var(--ink, #1a2433); }
+.ar-reward-brand { font-weight: 700; color: var(--primary, #0b7a75); margin: 0 0 10px; }
+.ar-reward-desc { color: var(--text2, #64748b); font-size: 0.9rem; margin: 0 0 16px; line-height: 1.4; }
+.ar-reward-code {
+  background: var(--bg2, #f0f4f8); border-radius: 12px; padding: 14px;
+  margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.ar-reward-code span { font-size: 0.72rem; color: var(--text3, #94a3b8); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+.ar-reward-code strong { font-size: 1.3rem; letter-spacing: .08em; color: var(--ink, #1a2433); font-family: monospace; }

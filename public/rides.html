@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request a Ride — Gulf Coast Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2a9d5c;--green2:#1ec96b;--dark:#0a2233;
+  --text:#0d1f2d;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f8fafc;--card:#fff;
+  --font:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HERO */
+.hero{
+  background:linear-gradient(160deg,#0a2233 0%,#0e3a54 50%,#1a6e8a 80%,#2a9d5c 100%);
+  padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:48px;
+  background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);
+}
+.hero-logo{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:32px}
+.hero-logo span{color:var(--green2)}
+.hero h1{font-size:clamp(32px,6vw,54px);font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1.08;margin-bottom:14px}
+.hero p{font-size:16px;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto;line-height:1.7}
+.hero-badges{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.hero-badge{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600}
+
+/* FORM CARD */
+.form-wrap{max-width:540px;margin:-32px auto 60px;padding:0 20px;position:relative;z-index:2}
+.form-card{background:var(--card);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.1);padding:32px 28px}
+.form-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.form-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;color:var(--text);outline:none;font-family:var(--font);
+  transition:border-color .2s;background:#fff;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
+.field textarea{resize:none;height:72px}
+.field-icon{position:relative}
+.field-icon .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.field-icon input{padding-left:38px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+.submit-btn{
+  width:100%;padding:14px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;font-size:15px;font-weight:800;cursor:pointer;
+  transition:opacity .15s;font-family:var(--font);letter-spacing:-.2px;
+}
+.submit-btn:hover:not(:disabled){opacity:.88}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed}
+.submit-btn.loading::after{content:' …'}
+
+.note{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6}
+.error-msg{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:10px 14px;border-radius:8px;font-size:13px;margin-top:12px;display:none}
+
+/* SUCCESS */
+.success-card{background:var(--card);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.1);padding:48px 28px;text-align:center;display:none}
+.success-icon{font-size:56px;margin-bottom:16px}
+.success-title{font-size:22px;font-weight:900;margin-bottom:10px;color:var(--green)}
+.success-sub{font-size:14px;color:var(--muted);line-height:1.7;max-width:360px;margin:0 auto 24px}
+.success-detail{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:16px 18px;font-size:13px;color:#14532d;text-align:left;line-height:1.8}
+.success-detail strong{color:#15803d}
+
+/* HOW IT WORKS */
+.how{max-width:540px;margin:0 auto 60px;padding:0 20px}
+.how-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;text-align:center;margin-bottom:20px}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{width:36px;height:36px;background:linear-gradient(135deg,var(--green),var(--green2));border-radius:50%;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text h4{font-size:14px;font-weight:700;margin-bottom:3px}
+.step-text p{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* FOOTER */
+footer{text-align:center;padding:32px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+footer a{color:var(--green)}
+
+@media(max-width:480px){
+  .form-card{padding:24px 18px}
+  .row2{grid-template-columns:1fr}
+  .hero{padding:48px 20px 72px}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">Gulf Coast <span>Radar</span></div>
+  <h1>Request a Local Ride</h1>
+  <p>Tell us where you're going. A local driver will text you their price — no upfront booking, no hidden fees.</p>
+  <div class="hero-badges">
+    <div class="hero-badge">🚗 Local Drivers</div>
+    <div class="hero-badge">💬 Price Via Text</div>
+    <div class="hero-badge">📍 Beach Town Coverage</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+  <div class="form-card" id="form-card">
+    <div class="form-title">Where do you need to go?</div>
+    <div class="form-sub">Fill in your details and a local driver will text you a price shortly.</div>
+
+    <div class="field">
+      <label>Your Name</label>
+      <div class="field-icon">
+        <span class="icon">👤</span>
+        <input type="text" id="f-name" placeholder="First Last" autocomplete="name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your Phone Number</label>
+      <div class="field-icon">
+        <span class="icon">📱</span>
+        <input type="tel" id="f-phone" placeholder="251-555-0000" autocomplete="tel">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>Pickup Location</label>
+      <div class="field-icon">
+        <span class="icon">📍</span>
+        <input type="text" id="f-pickup" placeholder="Hotel name, address, or landmark">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Drop-off Location</label>
+      <div class="field-icon">
+        <span class="icon">🏁</span>
+        <input type="text" id="f-dest" placeholder="Marina, restaurant, airport, condo…">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Passengers</label>
+        <select id="f-pax">
+          <option value="1">1 passenger</option>
+          <option value="2">2 passengers</option>
+          <option value="3">3 passengers</option>
+          <option value="4" selected>4 passengers</option>
+          <option value="5">5 passengers</option>
+          <option value="6">6 passengers</option>
+          <option value="7">7 passengers</option>
+          <option value="8">8 passengers</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pickup Date & Time</label>
+        <input type="datetime-local" id="f-time">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Special Requests (optional)</label>
+      <textarea id="f-notes" placeholder="Wheelchair accessible, child seat, luggage, late night…"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitRide()">Request My Ride →</button>
+    <div class="error-msg" id="error-msg"></div>
+    <div class="note">A local driver will text you their price. You decide if you want the ride — no commitment until you say yes.</div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div class="success-card" id="success-card">
+    <div class="success-icon">🚗</div>
+    <div class="success-title">Request Sent!</div>
+    <div class="success-sub">A local driver will text you their price shortly. Reply YES to confirm your ride.</div>
+    <div class="success-detail" id="success-detail"></div>
+    <button class="submit-btn" style="margin-top:20px;max-width:280px" onclick="location.reload()">Request Another Ride</button>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how">
+  <div class="how-title">How It Works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h4>Submit Your Ride Request</h4>
+        <p>Tell us where you're going, when, and how many people. Takes 30 seconds.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h4>Driver Texts You a Price</h4>
+        <p>A local driver sees your request and texts you their price. Prices vary based on distance, time, and availability.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h4>Reply YES to Confirm</h4>
+        <p>If you like the price, reply YES. That's it. Your driver will pick you up at the arranged time.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <h4>Pay Your Driver</h4>
+        <p>Pay the driver directly via the payment link they send you. No app needed.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Powered by <a href="https://gulfcoastradar.com">Gulf Coast Radar</a> · Local rides for beach towns
+</footer>
+
+<script>
+const API = 'https://gcr-api-clean.vercel.app';
+
+// Pre-fill from query params (when linked from a booking confirmation)
+(function prefill() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('pickup'))  document.getElementById('f-pickup').value  = p.get('pickup');
+  if (p.get('dest'))    document.getElementById('f-dest').value    = p.get('dest');
+  if (p.get('name'))    document.getElementById('f-name').value    = p.get('name');
+  if (p.get('phone'))   document.getElementById('f-phone').value   = p.get('phone');
+  if (p.get('pax'))     document.getElementById('f-pax').value     = p.get('pax');
+  if (p.get('time'))    document.getElementById('f-time').value    = p.get('time');
+})();
+
+async function submitRide() {
+  const name   = document.getElementById('f-name').value.trim();
+  const phone  = document.getElementById('f-phone').value.trim();
+  const pickup = document.getElementById('f-pickup').value.trim();
+  const dest   = document.getElementById('f-dest').value.trim();
+  const pax    = document.getElementById('f-pax').value;
+  const time   = document.getElementById('f-time').value;
+  const notes  = document.getElementById('f-notes').value.trim();
+  const errEl  = document.getElementById('error-msg');
+  const btn    = document.getElementById('submit-btn');
+
+  errEl.style.display = 'none';
+
+  if (!phone) { showErr('Please enter your phone number so a driver can reach you.'); return; }
+  if (!pickup) { showErr('Please enter a pickup location.'); return; }
+  if (!dest)   { showErr('Please enter a drop-off location.'); return; }
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = 'Sending request';
+
+  try {
+    const r = await fetch(API + '/api/rides/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer_name:  name  || null,
+        customer_phone: phone,
+        pickup_address: pickup,
+        destination:    dest,
+        pickup_time:    time ? new Date(time).toISOString() : null,
+        passengers:     parseInt(pax) || 1,
+        notes:          notes || null,
+        source:         new URLSearchParams(location.search).get('source') || 'rides-page',
+        source_booking_id: new URLSearchParams(location.search).get('booking_id') || null,
+      })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Failed to submit');
+
+    // Show success
+    document.getElementById('form-card').style.display   = 'none';
+    document.getElementById('success-card').style.display = 'block';
+
+    const fmtTime = time
+      ? new Date(time).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true})
+      : 'Flexible';
+
+    document.getElementById('success-detail').innerHTML =
+      '<strong>📍 Pickup:</strong> ' + esc(pickup) + '<br>' +
+      '<strong>🏁 Drop-off:</strong> ' + esc(dest) + '<br>' +
+      '<strong>👥 Passengers:</strong> ' + pax + '<br>' +
+      '<strong>🕐 Time:</strong> ' + fmtTime + '<br>' +
+      '<strong>📱 Driver will text:</strong> ' + esc(phone);
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = 'Request My Ride →';
+    showErr(e.message || 'Something went wrong. Please try again.');
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

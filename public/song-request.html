@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Request a Song | Get Sideways</title>
+<style>
+:root{
+  --bg:#071018;--panel:#0d1825;--panel2:#101f30;--card:#132438;--line:rgba(255,255,255,.12);
+  --text:#f6fbff;--muted:#a8b8c7;--accent:#6ee7ff;--accent2:#ffcc66;--hot:#ff5a7a;--good:#44e39f;
+  --shadow:0 24px 70px rgba(0,0,0,.35);--radius:26px;
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(110,231,255,.16),transparent 30%),radial-gradient(circle at 80% 10%,rgba(255,90,122,.14),transparent 27%),linear-gradient(180deg,#061019,#091522 55%,#05090f);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.45;min-height:100vh;}
+a{color:inherit;text-decoration:none} .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 70px}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(7,16,24,.74);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar .inner{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:900;letter-spacing:.2px}
+.logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--hot));box-shadow:0 8px 30px rgba(110,231,255,.18);background-size:cover;background-position:center;}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);padding:8px 12px;border-radius:999px;color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:16px;padding:13px 16px;font-weight:900;background:linear-gradient(135deg,var(--accent),#7cf8c5);color:#031017;cursor:pointer;box-shadow:0 12px 32px rgba(110,231,255,.16);font-size:15px;width:100%;}
+.btn.secondary{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.hot{background:linear-gradient(135deg,#ff5a7a,#ffcc66);color:#12050a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero{padding:34px 0 20px;display:grid;grid-template-columns:1.12fr .88fr;gap:22px;align-items:stretch}
+.hero-card,.panel,.card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border-radius:var(--radius);box-shadow:var(--shadow)}
+.hero-card{padding:28px}
+.eyebrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--good);box-shadow:0 0 0 6px rgba(68,227,159,.12)}
+h1{font-size:clamp(34px,6vw,64px);line-height:.98;margin:0 0 12px;letter-spacing:-2px}
+.lead{font-size:clamp(15px,2vw,19px);color:#dce9f4;max-width:760px}
+.grid{display:grid;gap:16px}
+.panel{padding:22px;margin:16px 0}
+.card{padding:18px}
+.muted{color:var(--muted)}
+h2{font-size:clamp(22px,3vw,32px);margin:0 0 16px;letter-spacing:-1px}
+h3{margin:0 0 8px;font-size:20px}
+.phone{width:100%;max-width:390px;margin:auto;border:1px solid rgba(255,255,255,.18);border-radius:38px;padding:12px;background:#02060a;box-shadow:0 30px 90px rgba(0,0,0,.45)}
+.screen{border-radius:28px;background:linear-gradient(180deg,#102032,#071018);padding:18px;min-height:200px;overflow:hidden}
+.action-card{display:flex;align-items:center;gap:14px;border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:20px;padding:16px}
+.icon{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;background:rgba(110,231,255,.15);font-size:20px;flex-shrink:0;}
+.form{display:grid;gap:12px}
+.field{display:grid;gap:6px}
+.field label{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:900;letter-spacing:.7px}
+.mode-toggle{display:flex;gap:8px;margin-bottom:14px;}
+.mode-btn{flex:1;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--muted);font-weight:900;cursor:pointer;font-size:14px;}
+.mode-btn.active{background:linear-gradient(135deg,var(--accent),#7cf8c5);color:#031017;border-color:transparent;}
+#priorityLabel{text-transform:none;font-size:13px;color:var(--text);letter-spacing:normal;font-weight:600;cursor:pointer;}
+input,select,textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:14px;padding:12px 13px;font:inherit}
+textarea{min-height:80px;resize:vertical}
+.two-pane{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.table{width:100%;border-collapse:separate;border-spacing:0 8px}
+.table th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.7px;padding:0 10px}
+.table td{background:rgba(255,255,255,.055);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 10px}
+.table td:first-child{border-left:1px solid var(--line);border-radius:14px 0 0 14px}
+.table td:last-child{border-right:1px solid var(--line);border-radius:0 14px 14px 0}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.6px;border:1px solid var(--line);border-radius:999px;padding:6px 9px;background:rgba(255,255,255,.06)}
+.status.good{color:var(--good)}
+.status.warn{color:var(--accent2)}
+.status.hot{color:var(--hot)}
+.notice{border:1px dashed rgba(255,255,255,.25);border-radius:20px;padding:16px;background:rgba(255,204,102,.075)}
+.notice.error{background:rgba(255,90,122,.1);border-color:rgba(255,90,122,.4)}
+.flow{display:grid;gap:10px;counter-reset:step}
+.flow .step{position:relative;border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:18px;padding:14px 14px 14px 52px}
+.flow .step:before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:10px;background:var(--accent);color:#061019;font-weight:950;display:grid;place-items:center}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:16px;padding:12px;overflow:auto;font-size:18px;font-weight:900;letter-spacing:1px;color:var(--accent2);}
+.pay-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.pay-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px;border-radius:16px;font-weight:900;border:none;cursor:pointer;}
+.pay-btn.venmo{background:#3d95ce;color:#fff;}
+.pay-btn.cashapp{background:#00d64f;color:#04220f;}
+.pay-btn span.sub{font-size:11px;font-weight:600;opacity:.85;}
+.copy-btn{background:none;border:1px solid var(--line);border-radius:10px;color:var(--accent);padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+.spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:60px auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footer{margin-top:36px;color:var(--muted);font-size:13px}
+.coop-card{border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;background:rgba(255,255,255,.03);}
+.coop-progress{height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid var(--line);margin:10px 0;}
+.coop-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--good));}
+.coop-amounts{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);}
+@media(max-width:860px){.hero,.two-pane{grid-template-columns:1fr}.pay-buttons{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="inner"><div class="brand"><span class="logo" id="brandLogo"></span><span id="brandName">Get Sideways</span></div><span class="pill"><span class="live-dot"></span>Powered by CyberCheck Artist OS</span></div></div>
+
+<div id="loadingState" style="text-align:center;padding:80px 16px;"><div class="spinner"></div><p class="muted">Loading artist…</p></div>
+
+<div id="notFoundState" style="display:none;max-width:600px;margin:60px auto;padding:0 16px;">
+  <div class="notice error">
+    <b>Artist profile not found.</b>
+    <p class="muted" style="margin:8px 0 0;">No active artist profile exists for slug "<span id="nfSlug"></span>" yet. An admin needs to create it first (<code>POST /api/artists</code> with artist_name, slug, venmo, cashtag) before this page will work.</p>
+  </div>
+</div>
+
+<main class="wrap" id="mainContent" style="display:none;">
+  <section class="hero">
+    <div class="hero-card">
+      <div class="eyebrow"><span class="pill" id="genrePill">Live music</span><span class="pill" id="requestPill">Requests open</span></div>
+      <h1 id="artistName">Get Sideways</h1>
+      <p class="lead" id="artistBio">Send a song request straight to the stage — put the reference code in your Venmo or Cash App note and it lands in the live queue automatically.</p>
+    </div>
+    <div class="phone"><div class="screen" id="heroPhoto">
+      <span class="status good">Live Page</span>
+      <h2 style="margin-top:12px;font-size:22px;" id="heroName">Get Sideways</h2>
+      <p class="muted" id="heroSub">90s/2000s Pop-Rock + Party Country</p>
+      <div style="height:12px"></div>
+      <div class="action-card"><div class="icon">⚡</div><div><b>Request a Song</b><br><span class="muted">Fill out the form below.</span></div></div>
+    </div></div>
+  </section>
+
+  <section class="panel two-pane">
+    <div>
+      <h2>Fan Form</h2>
+      <div class="mode-toggle" id="modeToggle">
+        <button type="button" class="mode-btn active" data-mode="song" onclick="setMode('song')">🎵 Song Request</button>
+        <button type="button" class="mode-btn" data-mode="shoutout" onclick="setMode('shoutout')">📣 Shoutout</button>
+        <button type="button" class="mode-btn" data-mode="crowdfund" onclick="setMode('crowdfund')">🔥 Crowdfund</button>
+      </div>
+      <form class="form" id="requestForm">
+        <div class="field"><label>Your Name</label><input id="fanName" placeholder="Katie" required></div>
+
+        <div id="songFields">
+          <div class="field"><label>Song Title</label><input id="songTitle" placeholder="Mr. Brightside"></div>
+          <div class="field"><label>Original Artist (optional)</label><input id="origArtist" placeholder="The Killers"></div>
+        </div>
+        <div id="shoutoutFields" style="display:none;">
+          <div class="field"><label>Shoutout Message</label><textarea id="shoutoutMsg" placeholder="Happy Birthday Sarah! 🎉"></textarea></div>
+          <div class="field"><label>Who's it for? (optional)</label><input id="shoutoutFor" placeholder="Sarah at the front table"></div>
+        </div>
+
+        <div class="field"><label id="priorityLabel"><input type="checkbox" id="rushCheck" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">Make it priority / rush</label></div>
+        <div class="field"><label>Amount ($)</label><input id="amount" type="number" step="0.5" min="1"></div>
+        <div class="field" id="noteField"><label>Note (optional)</label><textarea id="note" placeholder="Anything else the artist should know"></textarea></div>
+        <button class="btn hot" type="submit" id="submitBtn">Create Request + Code</button>
+      </form>
+      <div id="resultBox" class="notice" style="display:none;margin-top:14px"></div>
+      <div id="errorBox" class="notice error" style="display:none;margin-top:14px"></div>
+
+      <div id="crowdfundPanel" style="display:none;">
+        <p class="muted" style="font-size:13px;margin:0 0 14px;">Chip in with other fans to get a song played. Each contribution gets its own reference code — same payment flow as a request.</p>
+        <div id="coopList"><p class="muted">Loading crowdfund goals…</p></div>
+        <div id="coopContributeWrap" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px;">
+          <h3 id="coopContributeTitle" style="font-size:16px;"></h3>
+          <form class="form" id="coopForm">
+            <input type="hidden" id="coopId">
+            <div class="field"><label>Your Name</label><input id="coopFanName" placeholder="Katie" required></div>
+            <div class="field"><label>Amount ($)</label><input id="coopAmount" type="number" step="0.5" min="1" value="5" required></div>
+            <button class="btn hot" type="submit" id="coopSubmitBtn">Chip In + Get Code</button>
+          </form>
+          <div id="coopResultBox" class="notice" style="display:none;margin-top:14px"></div>
+          <div id="coopErrorBox" class="notice error" style="display:none;margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>Live Queue <button class="copy-btn" onclick="loadQueue()" style="float:right;">↻ Refresh</button></h2>
+      <table class="table" id="queueTable"><tr><th>Song</th><th>Fan</th><th>Status</th></tr></table>
+      <div class="notice"><b>Rule:</b> Requests are reviewed by the artist and are not guaranteed to be played.</div>
+    </div>
+  </section>
+
+  <section class="panel"><h2>How the Payment Parser Works</h2>
+    <div class="flow">
+      <div class="step">Your request is saved and a unique reference code (like <b>REQ-AB12CD</b>) is generated.</div>
+      <div class="step">You send the amount via Venmo or Cash App with the code pasted into the note/memo field.</div>
+      <div class="step">The artist forwards the payment confirmation email to CyberCheck — the parser reads it automatically.</div>
+      <div class="step">The parser matches your code to your request and flips it to <span class="status good" style="padding:3px 8px;">Verified</span> in the live queue above.</div>
+    </div>
+  </section>
+
+  <div class="footer">Get Sideways · Powered by CyberCheck Artist OS + Gulf Coast Radar</div>
+</main>
+
+<script>
+const API_BASE = 'https://gcr-api-clean.vercel.app';
+const params = new URLSearchParams(location.search);
+const SLUG = params.get('slug') || 'get-sideways';
+let ARTIST = null;
+let lastRequestId = null;
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function loadArtist() {
+  try {
+    const res = await fetch(`${API_BASE}/api/artists/${encodeURIComponent(SLUG)}`);
+    if (!res.ok) { showNotFound(); return; }
+    ARTIST = await res.json();
+    renderArtist();
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('mainContent').style.display = '';
+    loadQueue();
+    setInterval(loadQueue, 20000);
+  } catch (e) {
+    showNotFound();
+  }
+}
+
+function showNotFound() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('notFoundState').style.display = '';
+  document.getElementById('nfSlug').textContent = SLUG;
+}
+
+function renderArtist() {
+  document.title = `Request a Song | ${ARTIST.artist_name}`;
+  document.getElementById('brandName').textContent = ARTIST.artist_name;
+  document.getElementById('artistName').textContent = ARTIST.artist_name;
+  document.getElementById('heroName').textContent = ARTIST.artist_name;
+  if (ARTIST.bio) document.getElementById('artistBio').textContent = ARTIST.bio;
+  if (ARTIST.photo_url) {
+    document.getElementById('brandLogo').style.backgroundImage = `url(${ARTIST.photo_url})`;
+    document.getElementById('heroPhoto').style.backgroundImage = `url(${ARTIST.photo_url})`;
+    document.getElementById('heroPhoto').style.backgroundSize = 'cover';
+  }
+  const amountInput = document.getElementById('amount');
+  amountInput.value = ARTIST.default_min_request_amount || 5;
+  amountInput.min = ARTIST.default_min_request_amount || 1;
+
+  const reqPill = document.getElementById('requestPill');
+  if (ARTIST.request_enabled === false) {
+    reqPill.textContent = 'Requests closed right now';
+    document.getElementById('submitBtn').disabled = true;
+  }
+  if (!ARTIST.venmo && !ARTIST.cashtag) {
+    document.getElementById('errorBox').style.display = '';
+    document.getElementById('errorBox').innerHTML = '<b>Heads up:</b> this artist has no Venmo or Cash App connected yet — requests can still be created but there\'s no way to pay.';
+  }
+}
+
+let MODE = 'song';
+let coopsLoaded = false;
+function setMode(mode) {
+  MODE = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+
+  const isCrowdfund = mode === 'crowdfund';
+  document.getElementById('requestForm').style.display = isCrowdfund ? 'none' : '';
+  document.getElementById('crowdfundPanel').style.display = isCrowdfund ? '' : 'none';
+  if (!isCrowdfund) {
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'none';
+  }
+
+  document.getElementById('songFields').style.display = mode === 'song' ? '' : 'none';
+  document.getElementById('shoutoutFields').style.display = mode === 'shoutout' ? '' : 'none';
+  document.getElementById('songTitle').required = mode === 'song';
+  document.getElementById('shoutoutMsg').required = mode === 'shoutout';
+  document.getElementById('submitBtn').textContent = mode === 'shoutout' ? 'Create Shoutout + Code' : 'Create Request + Code';
+
+  if (isCrowdfund && !coopsLoaded) { coopsLoaded = true; loadCoops(); }
+}
+
+document.getElementById('rushCheck').addEventListener('change', function() {
+  const base = ARTIST?.default_min_request_amount || 5;
+  document.getElementById('amount').value = this.checked ? base * 2 : base;
+});
+
+document.getElementById('requestForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const errorBox = document.getElementById('errorBox');
+  const resultBox = document.getElementById('resultBox');
+  errorBox.style.display = 'none';
+  resultBox.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  const noteVal = document.getElementById('note').value.trim();
+  let songTitle, combinedNote;
+
+  if (MODE === 'shoutout') {
+    songTitle = document.getElementById('shoutoutMsg').value.trim();
+    const forWhom = document.getElementById('shoutoutFor').value.trim();
+    combinedNote = [forWhom ? `For: ${forWhom}` : '', noteVal].filter(Boolean).join(' — ');
+  } else {
+    songTitle = document.getElementById('songTitle').value.trim();
+    const origArtist = document.getElementById('origArtist').value.trim();
+    combinedNote = [origArtist ? `Originally by ${origArtist}` : '', noteVal].filter(Boolean).join(' — ');
+  }
+
+  const payload = {
+    fan_name: document.getElementById('fanName').value.trim(),
+    song_title: songTitle,
+    note: combinedNote || null,
+    amount: parseFloat(document.getElementById('amount').value) || undefined,
+    rush: document.getElementById('rushCheck').checked,
+    request_type: MODE,
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/artists/${encodeURIComponent(SLUG)}/request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to create request');
+
+    lastRequestId = data.request_id;
+    showPaymentInstructions(data);
+    loadQueue();
+  } catch (err) {
+    errorBox.style.display = '';
+    errorBox.innerHTML = `<b>Error:</b> ${esc(err.message)}`;
+  } finally {
+    btn.disabled = false; btn.textContent = MODE === 'shoutout' ? 'Create Shoutout + Code' : 'Create Request + Code';
+  }
+});
+
+function showPaymentInstructions(data) {
+  const box = document.getElementById('resultBox');
+  box.style.display = '';
+  const amt = data.amount;
+  const noteText = `${data.song_title} ${data.req_code}`;
+  const venmoUrl = data.venmo ? `https://venmo.com/${String(data.venmo).replace(/^@/,'')}?txn=pay&amount=${amt}&note=${encodeURIComponent(noteText)}` : null;
+  const cashUrl  = data.cashtag ? `https://cash.app/$${String(data.cashtag).replace(/^\$/,'')}/${amt}` : null;
+
+  box.innerHTML = `
+    <b>${MODE === 'shoutout' ? 'Shoutout' : 'Request'} created!</b>
+    <p class="muted" style="margin:8px 0;">Your reference code — paste this in the payment note:</p>
+    <div class="code" id="reqCodeText">${esc(data.req_code)}</div>
+    <button class="copy-btn" style="margin-top:8px;" onclick="navigator.clipboard.writeText('${esc(data.req_code)}')">📋 Copy Code</button>
+    <div class="pay-buttons">
+      ${venmoUrl ? `<a class="pay-btn venmo" href="${venmoUrl}" target="_blank" rel="noopener">Venmo<span class="sub">$${amt}</span></a>` : ''}
+      ${cashUrl ? `<a class="pay-btn cashapp" href="${cashUrl}" target="_blank" rel="noopener">Cash App<span class="sub">$${amt}</span></a>` : ''}
+    </div>
+    ${cashUrl ? `<p class="muted" style="margin-top:10px;font-size:12px;">Cash App links can't prefill a note — type <b>${esc(data.req_code)}</b> into the "For" field yourself.</p>` : ''}
+    <p class="muted" style="margin-top:10px;font-size:12px;">Once the artist's payment confirmation email is processed, your request flips to Verified in the Live Queue.</p>
+  `;
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function loadQueue() {
+  const table = document.getElementById('queueTable');
+  try {
+    const res = await fetch(`${API_BASE}/api/artists/${encodeURIComponent(SLUG)}/queue`);
+    if (!res.ok) return;
+    const queue = await res.json();
+    const statusMap = {
+      pending:   ['warn', 'Payment Pending'],
+      paid:      ['good', 'Verified'],
+      underpaid: ['hot',  'Needs Review'],
+      overpaid:  ['hot',  'Needs Review'],
+    };
+    const rows = (queue || []).slice(-25).reverse().map(function(r) {
+      const [cls, label] = statusMap[r.payment_status] || ['', r.payment_status || 'Unknown'];
+      const mine = r.id === lastRequestId ? ' style="outline:1px solid var(--accent);"' : '';
+      return `<tr${mine}><td>${esc(r.song_title)}${r.rush ? ' ⚡' : ''}</td><td>${esc(r.fan_name || 'Anonymous')}</td><td><span class="status ${cls}">${esc(label)}</span></td></tr>`;
+    }).join('');
+    table.innerHTML = '<tr><th>Song</th><th>Fan</th><th>Status</th></tr>' + (rows || '<tr><td colspan="3" class="muted">No requests yet — be the first!</td></tr>');
+  } catch (e) {}
+}
+
+let COOPS = [];
+async function loadCoops() {
+  const list = document.getElementById('coopList');
+  try {
+    const res = await fetch(`${API_BASE}/api/cooperatives/${encodeURIComponent(SLUG)}/cooperatives`);
+    if (!res.ok) { list.innerHTML = '<p class="muted">Could not load crowdfund goals.</p>'; return; }
+    COOPS = (await res.json()).filter(c => c.status !== 'cancelled');
+    renderCoops();
+  } catch (e) {
+    list.innerHTML = '<p class="muted">Could not load crowdfund goals.</p>';
+  }
+}
+
+function renderCoops() {
+  const list = document.getElementById('coopList');
+  if (!COOPS.length) {
+    list.innerHTML = '<p class="muted">No crowdfund goals right now — check back later or ask the band to start one.</p>';
+    return;
+  }
+  const card = c => {
+    const pct = Math.min(100, Math.round((c.current_amount || 0) / c.target_amount * 100));
+    const isFunded = c.status === 'funded';
+    return `<div class="coop-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <b>${esc(c.song_title)}</b>
+        ${isFunded ? '<span class="status good">Funded!</span>' : ''}
+      </div>
+      <div class="coop-progress"><div class="coop-bar" style="width:${pct}%;"></div></div>
+      <div class="coop-amounts"><span>$${(c.current_amount||0).toFixed(0)} raised</span><span>$${c.target_amount} goal</span></div>
+      ${isFunded ? '' : `<button class="btn secondary" style="margin-top:10px;" onclick="openCoopContribute('${c.id}','${esc(c.song_title).replace(/'/g,"\\'")}')">Chip In</button>`}
+    </div>`;
+  };
+  const active = COOPS.filter(c => c.status !== 'funded');
+  const funded = COOPS.filter(c => c.status === 'funded');
+  list.innerHTML = active.map(card).join('') + funded.map(card).join('');
+}
+
+function openCoopContribute(id, title) {
+  document.getElementById('coopId').value = id;
+  document.getElementById('coopContributeTitle').textContent = `Chip in toward "${title}"`;
+  document.getElementById('coopContributeWrap').style.display = '';
+  document.getElementById('coopResultBox').style.display = 'none';
+  document.getElementById('coopErrorBox').style.display = 'none';
+  document.getElementById('coopContributeWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('coopForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('coopSubmitBtn');
+  const errorBox = document.getElementById('coopErrorBox');
+  const resultBox = document.getElementById('coopResultBox');
+  errorBox.style.display = 'none'; resultBox.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const id = document.getElementById('coopId').value;
+  const amt = parseFloat(document.getElementById('coopAmount').value) || 5;
+  const payload = {
+    fan_name: document.getElementById('coopFanName').value.trim(),
+    amount: amt,
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/cooperatives/${encodeURIComponent(SLUG)}/cooperatives/${id}/contribute`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to contribute');
+    showCoopPaymentInstructions(data, amt);
+    loadCoops();
+  } catch (err) {
+    errorBox.style.display = '';
+    errorBox.innerHTML = `<b>Error:</b> ${esc(err.message)}`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Chip In + Get Code';
+  }
+});
+
+function showCoopPaymentInstructions(data, amt) {
+  const box = document.getElementById('coopResultBox');
+  box.style.display = '';
+  const noteText = `${data.song_title} ${data.req_code}`;
+  const venmoUrl = ARTIST.venmo ? `https://venmo.com/${String(ARTIST.venmo).replace(/^@/,'')}?txn=pay&amount=${amt}&note=${encodeURIComponent(noteText)}` : null;
+  const cashUrl  = ARTIST.cashtag ? `https://cash.app/$${String(ARTIST.cashtag).replace(/^\$/,'')}/${amt}` : null;
+
+  box.innerHTML = `
+    <b>Contribution created!</b>
+    <p class="muted" style="margin:8px 0;">Your reference code — paste this in the payment note:</p>
+    <div class="code">${esc(data.req_code)}</div>
+    <button class="copy-btn" style="margin-top:8px;" onclick="navigator.clipboard.writeText('${esc(data.req_code)}')">📋 Copy Code</button>
+    <div class="pay-buttons">
+      ${venmoUrl ? `<a class="pay-btn venmo" href="${venmoUrl}" target="_blank" rel="noopener">Venmo<span class="sub">$${amt}</span></a>` : ''}
+      ${cashUrl ? `<a class="pay-btn cashapp" href="${cashUrl}" target="_blank" rel="noopener">Cash App<span class="sub">$${amt}</span></a>` : ''}
+    </div>
+    <p class="muted" style="margin-top:10px;font-size:12px;">This goal is at $${(data.current_amount||0)} of $${data.target_amount} — refresh once your payment is matched to see it update.</p>
+  `;
+}
+
+setMode('song');
+loadArtist();
+</script>
+</body>
+</html>

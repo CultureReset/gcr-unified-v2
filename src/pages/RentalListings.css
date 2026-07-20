@@ -1,0 +1,124 @@
+.staying-page { min-height: 100vh; background: #fffcf5; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+
+.staying-hero { background: linear-gradient(135deg,#0b2d42 0%,#0e5f8a 60%,#0a8472 100%); color:#fff; padding:2rem 1.25rem 1.75rem; }
+.staying-hero-inner { max-width:1220px; margin:auto; }
+.staying-hero h1 { font-size:clamp(2rem,5vw,3.5rem); font-weight:1000; letter-spacing:-.05em; text-transform:uppercase; margin:0 0 .5rem; }
+.staying-hero p { color:rgba(255,255,255,.78); margin:0 0 1rem; font-size:.97rem; }
+.staying-hero-stats { display:flex; gap:1.5rem; flex-wrap:wrap; font-size:.88rem; color:rgba(255,255,255,.7); }
+.staying-hero-stats b { color:#f5b731; font-size:1.1rem; margin-right:.2rem; }
+
+.staying-type-bar { background:#fff; border-bottom:1px solid rgba(0,0,0,.08); padding:.6rem 1rem; display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none; position:sticky; top:var(--gcr-header-h,128px); z-index:20; }
+.staying-type-bar::-webkit-scrollbar { display:none; }
+.staying-type-btn { display:inline-flex; align-items:center; gap:.35rem; padding:.5rem .85rem; border-radius:999px; border:1.5px solid rgba(0,0,0,.12); background:#fff; font-size:.82rem; font-weight:800; white-space:nowrap; cursor:pointer; color:#5e7080; font-family:inherit; transition:.15s; }
+.staying-type-btn:hover { border-color:#0a8472; color:#0a8472; }
+.staying-type-btn.active { background:#0b2d42; color:#fff; border-color:#0b2d42; }
+.staying-type-count { background:rgba(255,255,255,.25); border-radius:999px; padding:.1rem .45rem; font-size:.7rem; font-weight:900; }
+.staying-type-btn.active .staying-type-count { background:rgba(255,255,255,.2); }
+.staying-type-btn:not(.active) .staying-type-count { background:#f2e8d5; color:#0b2d42; }
+
+.staying-controls { max-width:1220px; margin:.85rem auto; padding:0 1.25rem; display:flex; align-items:center; gap:.65rem; flex-wrap:wrap; }
+.staying-search-wrap { flex:1; min-width:200px; position:relative; display:flex; align-items:center; }
+.staying-search-icon { position:absolute; left:.85rem; font-size:.95rem; pointer-events:none; }
+.staying-search { width:100%; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; padding:.7rem .85rem .7rem 2.2rem; font-size:.9rem; background:#fff; font-family:inherit; }
+.staying-search:focus { outline:none; border-color:#0a8472; }
+.staying-search-clear { position:absolute; right:.6rem; background:none; border:none; cursor:pointer; color:#999; font-size:1rem; }
+.staying-sort { border:1.5px solid rgba(0,0,0,.12); border-radius:12px; padding:.7rem .85rem; font-size:.85rem; font-weight:700; background:#fff; font-family:inherit; color:#111d27; cursor:pointer; }
+.staying-count { font-size:.82rem; font-weight:800; color:#5e7080; white-space:nowrap; }
+
+.staying-content { max-width:1220px; margin:0 auto; padding:0 1.25rem 2rem; }
+.stay-grid { display:flex; flex-direction:column; gap:1.15rem; max-width:620px; margin:0 auto; }
+
+.stay-card { background:#fff; border:1.5px solid rgba(0,0,0,.08); border-radius:18px; overflow:hidden; cursor:pointer; transition:.2s; box-shadow:0 8px 24px rgba(0,0,0,.07); display:flex; flex-direction:column; }
+.stay-card:hover { transform:translateY(-4px); box-shadow:0 20px 48px rgba(0,0,0,.13); }
+.stay-card-img { height:200px; position:relative; overflow:hidden; background:#f2e8d5; flex-shrink:0; }
+.stay-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .35s; }
+.stay-card:hover .stay-card-img img { transform:scale(1.04); }
+.stay-card-img-placeholder { width:100%; height:100%; display:grid; place-items:center; font-size:3.5rem; background:linear-gradient(135deg,#e8f4f7,#f2e8d5); }
+.stay-type-badge { position:absolute; top:.65rem; left:.65rem; background:rgba(11,45,66,.82); color:#fff; padding:.3rem .65rem; border-radius:999px; font-size:.72rem; font-weight:900; backdrop-filter:blur(4px); }
+.stay-price-badge { position:absolute; bottom:.65rem; right:.65rem; background:#0a8472; color:#fff; padding:.35rem .7rem; border-radius:999px; font-size:.9rem; font-weight:1000; }
+.stay-price-badge span { font-size:.72rem; font-weight:700; opacity:.85; }
+.stay-save-btn { position:absolute; top:.65rem; right:.65rem; background:rgba(255,255,255,.9); border:none; border-radius:50%; width:34px; height:34px; display:grid; place-items:center; cursor:pointer; font-size:1rem; box-shadow:0 2px 8px rgba(0,0,0,.15); transition:.15s; }
+.stay-save-btn.saved { background:#fff0f0; }
+
+.stay-card-body { padding:.9rem 1rem 1rem; display:flex; flex-direction:column; gap:.4rem; flex:1; }
+.stay-card-name { font-size:1rem; font-weight:900; color:#111d27; line-height:1.15; }
+.stay-card-location { font-size:.78rem; color:#5e7080; font-weight:700; }
+.stay-card-specs { display:flex; gap:.5rem; flex-wrap:wrap; font-size:.78rem; font-weight:700; color:#5e7080; }
+.stay-card-rating { font-size:.82rem; font-weight:900; color:#111d27; display:flex; align-items:center; gap:.3rem; }
+.stay-review-count { font-weight:600; color:#5e7080; }
+.stay-view-btn { margin-top:auto; background:#0b2d42; color:#fff; border:none; border-radius:10px; padding:.65rem; font-weight:900; font-size:.85rem; cursor:pointer; font-family:inherit; transition:.15s; }
+.stay-view-btn:hover { background:#0a8472; }
+
+.staying-loading, .staying-empty { display:flex; flex-direction:column; align-items:center; padding:4rem 1rem; gap:.75rem; color:#5e7080; text-align:center; }
+.staying-spinner { width:36px; height:36px; border:3px solid #f2e8d5; border-top-color:#0a8472; border-radius:50%; animation:stayspin .8s linear infinite; }
+@keyframes stayspin { to { transform:rotate(360deg); } }
+
+@media(max-width:580px) { .staying-controls { flex-direction:column; align-items:stretch; } }
+
+/* Complexes / Units view toggle */
+.staying-view-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.staying-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid #d8e2ec;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.staying-view-btn.active {
+  background: #0369a1;
+  border-color: #0369a1;
+  color: #fff;
+}
+
+/* Units-available line on complex cards */
+.stay-units-line {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0e1726;
+}
+
+.stay-units-avail { color: #0f9d75; }
+
+/* Amenity chips on unit cards */
+.stay-amenity-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.stay-amenity-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #eef6fb;
+  border: 1px solid #d8e2ec;
+  color: #33415c;
+  text-transform: capitalize;
+}
+
+.stay-amenity-chip.more { background: #fff5f0; }
+
+/* Complex description snippet on listing cards */
+.stay-card-desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5c6b81;
+}

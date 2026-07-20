@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Menu Update</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #0f172a; padding-bottom: 100px; }
+
+.header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  padding: 24px 20px 20px;
+  padding-top: max(24px, env(safe-area-inset-top));
+  color: #fff;
+}
+.header-biz { font-size: 1.4rem; font-weight: 900; line-height: 1.2; }
+.header-sub { font-size: 0.82rem; color: rgba(255,255,255,.6); margin-top: 4px; }
+.header-date { font-size: 0.78rem; color: rgba(255,255,255,.45); margin-top: 6px; }
+
+.tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; overflow-x: auto; position: sticky; top: 0; z-index: 10; }
+.tab { padding: 14px 18px; font-size: 0.85rem; font-weight: 700; color: #64748b; white-space: nowrap; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.tab.active { color: #0f172a; border-color: #0f172a; }
+
+.section { padding: 14px 16px 6px; }
+.section-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: #94a3b8; margin-bottom: 10px; }
+
+.item-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid #e2e8f0;
+  transition: border-color .15s;
+}
+.item-card.sold-out { border-color: #fecaca; background: #fff5f5; }
+.item-img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #e2e8f0; }
+.item-img-ph { width: 52px; height: 52px; border-radius: 8px; background: #e2e8f0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.item-info { flex: 1; min-width: 0; }
+.item-name { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-desc { font-size: 0.78rem; color: #64748b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-price-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.price-input { width: 76px; padding: 5px 8px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.88rem; font-weight: 700; color: #0f172a; background: #f8fafc; }
+.price-input:focus { outline: none; border-color: #0f172a; background: #fff; }
+.item-right { flex-shrink: 0; }
+
+/* Toggle switch */
+.toggle { position: relative; display: inline-block; width: 48px; height: 26px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; inset: 0; background: #ef4444; border-radius: 26px; transition: .2s; cursor: pointer; }
+.slider:before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+input:checked + .slider { background: #22c55e; }
+input:checked + .slider:before { transform: translateX(22px); }
+.avail-label { font-size: 0.7rem; font-weight: 700; text-align: center; margin-top: 3px; color: #94a3b8; }
+
+/* Specials */
+.special-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid #fcd34d;
+  background: #fffbeb;
+}
+.special-name { font-size: 0.95rem; font-weight: 700; }
+.special-price { font-size: 0.88rem; color: #92400e; font-weight: 700; margin-top: 2px; }
+.special-desc { font-size: 0.8rem; color: #78350f; margin-top: 2px; }
+.remove-btn { float: right; background: none; border: none; color: #ef4444; font-size: 1.2rem; cursor: pointer; padding: 0 0 0 8px; line-height: 1; }
+
+.add-special-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 1.5px dashed #cbd5e1;
+}
+.add-special-card input,
+.add-special-card textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+  font-size: 0.9rem; font-family: inherit; background: #f8fafc; color: #0f172a;
+  margin-bottom: 8px;
+}
+.add-special-card input:focus,
+.add-special-card textarea:focus { outline: none; border-color: #0f172a; background: #fff; }
+.add-special-card textarea { resize: none; height: 60px; }
+.add-special-row { display: flex; gap: 8px; }
+.add-special-row input { flex: 1; margin-bottom: 0; }
+.btn-add { padding: 10px 16px; background: #0f172a; color: #fff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.btn-add:active { background: #1e3a5f; }
+
+/* Submit bar */
+.submit-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.btn-submit {
+  width: 100%; padding: 16px; background: #0f172a; color: #fff; border: none;
+  border-radius: 12px; font-size: 1rem; font-weight: 800; cursor: pointer; letter-spacing: .3px;
+  transition: background .15s;
+}
+.btn-submit:active { background: #1e3a5f; }
+.btn-submit:disabled { background: #94a3b8; cursor: default; }
+.changes-badge { display: inline-block; background: #ef4444; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 0.75rem; font-weight: 800; margin-left: 6px; vertical-align: middle; }
+
+/* Success */
+.success-screen { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
+.success-screen.show { display: flex; }
+.success-icon { font-size: 72px; margin-bottom: 24px; }
+.success-title { font-size: 1.6rem; font-weight: 900; color: #fff; }
+.success-sub { font-size: 1rem; color: rgba(255,255,255,.6); margin-top: 10px; }
+.success-count { font-size: 0.88rem; color: #22c55e; margin-top: 16px; font-weight: 700; }
+.btn-back { margin-top: 32px; padding: 14px 28px; background: #fff; color: #0f172a; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+
+/* Loading */
+.loading { display: flex; align-items: center; justify-content: center; height: 60vh; flex-direction: column; gap: 16px; color: #64748b; font-size: 0.9rem; }
+.spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: #0f172a; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.err { padding: 40px 24px; text-align: center; color: #ef4444; font-weight: 700; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+  <div>Loading your menu…</div>
+</div>
+
+<div id="app" style="display:none;">
+  <div class="header">
+    <div class="header-biz" id="bizName">Loading…</div>
+    <div class="header-sub" id="bizSub"></div>
+    <div class="header-date" id="todayDate"></div>
+  </div>
+
+  <div class="tabs" id="tabBar"></div>
+
+  <div id="panels"></div>
+</div>
+
+<div class="submit-bar" id="submitBar" style="display:none;">
+  <button class="btn-submit" id="submitBtn" onclick="submitChanges()">
+    Submit Menu Update <span class="changes-badge" id="changeBadge" style="display:none;"></span>
+  </button>
+</div>
+
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">Menu Updated!</div>
+  <div class="success-sub">Your live menu is updated.<br>Customers see it in real time.</div>
+  <div class="success-count" id="successCount"></div>
+  <button class="btn-back" onclick="location.reload()">Done</button>
+</div>
+
+<script>
+const API = 'https://gcr-api-clean.vercel.app/api/gcr';
+
+// State
+let _entityId = null;
+let _data = null;
+let _changes = { items: {}, drinks: {}, newSpecials: [], removedSpecials: new Set() };
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getEntityId() {
+  const p = new URLSearchParams(location.search);
+  return p.get('id') || p.get('entity_id') || p.get('slug');
+}
+
+function getParam() {
+  const p = new URLSearchParams(location.search);
+  // Prefer uuid id, fallback to slug
+  return { id: p.get('id') || p.get('entity_id'), slug: p.get('slug') };
+}
+
+async function loadMenu() {
+  const { id, slug } = getParam();
+  _entityId = id || slug;
+  if (!_entityId) {
+    document.getElementById('loading').innerHTML = '<div class="err">No menu specified. Check the link you were sent.</div>';
+    return;
+  }
+
+  try {
+    const param = id ? `entity_id=${encodeURIComponent(id)}` : `slug=${encodeURIComponent(slug)}`;
+    const res = await fetch(`${API}/menu-editor-data?${param}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _data = await res.json();
+    _entityId = _data.entity.id;
+    renderApp();
+  } catch (err) {
+    document.getElementById('loading').innerHTML = `<div class="err">Couldn't load menu.<br>${err.message}</div>`;
+  }
+}
+
+function renderApp() {
+  const e = _data.entity;
+  document.getElementById('bizName').textContent = e.name;
+  document.getElementById('bizSub').textContent = [e.city, e.entity_subtype].filter(Boolean).join(' · ');
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  document.title = `${e.name} — Menu Update`;
+
+  // Build tabs
+  const tabs = [];
+  if ((_data.menuSections?.length || _data.menuItems?.length)) tabs.push({ key: 'food', label: '🍽️ Food' });
+  if ((_data.drinkSections?.length || _data.drinkItems?.length)) tabs.push({ key: 'drinks', label: '🍺 Drinks' });
+  tabs.push({ key: 'specials', label: '⭐ Specials' });
+
+  const tabBar = document.getElementById('tabBar');
+  tabBar.innerHTML = tabs.map((t, i) =>
+    `<div class="tab${i === 0 ? ' active' : ''}" onclick="switchTab('${t.key}')" id="tab_${t.key}">${t.label}</div>`
+  ).join('');
+
+  const panels = document.getElementById('panels');
+  panels.innerHTML = tabs.map((t, i) =>
+    `<div class="tab-panel${i === 0 ? ' active' : ''}" id="panel_${t.key}"></div>`
+  ).join('');
+
+  renderFoodPanel();
+  renderDrinksPanel();
+  renderSpecialsPanel();
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('submitBar').style.display = 'block';
+}
+
+function switchTab(key) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tab = document.getElementById('tab_' + key);
+  const panel = document.getElementById('panel_' + key);
+  if (tab) tab.classList.add('active');
+  if (panel) panel.classList.add('active');
+}
+
+function renderFoodPanel() {
+  const panel = document.getElementById('panel_food');
+  if (!panel) return;
+  let html = '';
+
+  // Group items by section
+  const sections = _data.menuSections || [];
+  const allItems = _data.menuItems || [];
+
+  if (sections.length) {
+    sections.forEach(sec => {
+      const items = allItems.filter(i => i.menu_section_id === sec.id || i.section_id === sec.id);
+      if (!items.length) return;
+      html += `<div class="section"><div class="section-label">${esc(sec.section_name || sec.name)}</div>`;
+      items.forEach(item => { html += itemCardHtml(item, 'items'); });
+      html += '</div>';
+    });
+    // Uncategorized items
+    const catIds = new Set(sections.map(s => s.id));
+    const uncatItems = allItems.filter(i => !i.menu_section_id && !i.section_id);
+    if (uncatItems.length) {
+      html += `<div class="section"><div class="section-label">Other Items</div>`;
+      uncatItems.forEach(item => { html += itemCardHtml(item, 'items'); });
+      html += '</div>';
+    }
+  } else if (allItems.length) {
+    html += `<div class="section">`;
+    allItems.forEach(item => { html += itemCardHtml(item, 'items'); });
+    html += '</div>';
+  } else {
+    html = '<div style="padding:40px 24px;text-align:center;color:#94a3b8;font-size:0.9rem;">No food items yet.</div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+function renderDrinksPanel() {
+  const panel = document.getElementById('panel_drinks');
+  if (!panel) return;
+  let html = '';
+
+  const sections = _data.drinkSections || [];
+  const allItems = _data.drinkItems || [];
+
+  if (sections.length) {
+    sections.forEach(sec => {
+      const items = allItems.filter(i => i.drink_section_id === sec.id || i.section_id === sec.id);
+      if (!items.length) return;
+      html += `<div class="section"><div class="section-label">${esc(sec.section_name || sec.name)}</div>`;
+      items.forEach(item => { html += itemCardHtml(item, 'drinks'); });
+      html += '</div>';
+    });
+    const uncatItems = allItems.filter(i => !i.drink_section_id && !i.section_id);
+    if (uncatItems.length) {
+      html += `<div class="section"><div class="section-label">Other Drinks</div>`;
+      uncatItems.forEach(item => { html += itemCardHtml(item, 'drinks'); });
+      html += '</div>';
+    }
+  } else if (allItems.length) {
+    html += `<div class="section">`;
+    allItems.forEach(item => { html += itemCardHtml(item, 'drinks'); });
+    html += '</div>';
+  } else {
+    html = '<div style="padding:40px 24px;text-align:center;color:#94a3b8;font-size:0.9rem;">No drink items yet.</div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+function itemCardHtml(item, table) {
+  const avail = item.is_available !== false;
+  const name = item.item_name || item.name || '';
+  const price = item.price ? Number(item.price).toFixed(2) : '';
+  const desc = item.description || '';
+  const img = item.image_url;
+
+  return `<div class="item-card${avail ? '' : ' sold-out'}" id="card_${item.id}">
+    ${img
+      ? `<img class="item-img" src="${esc(img)}" alt="${esc(name)}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="item-img-ph" style="display:none;">🍴</div>`
+      : `<div class="item-img-ph">🍴</div>`}
+    <div class="item-info">
+      <div class="item-name">${esc(name)}</div>
+      ${desc ? `<div class="item-desc">${esc(desc)}</div>` : ''}
+      <div class="item-price-row">
+        <span style="font-size:0.78rem;color:#64748b;font-weight:600;">$</span>
+        <input class="price-input" type="number" step="0.01" min="0" value="${esc(price)}"
+          onchange="markPriceChange('${item.id}','${table}',this.value)" placeholder="—" inputmode="decimal">
+      </div>
+    </div>
+    <div class="item-right" style="text-align:center;">
+      <label class="toggle">
+        <input type="checkbox" ${avail ? 'checked' : ''} onchange="markAvailChange('${item.id}','${table}',this.checked,'card_${item.id}')">
+        <span class="slider"></span>
+      </label>
+      <div class="avail-label" id="lbl_${item.id}">${avail ? 'In Stock' : 'Sold Out'}</div>
+    </div>
+  </div>`;
+}
+
+function markAvailChange(id, table, checked, cardId) {
+  if (!_changes[table]) _changes[table] = {};
+  if (!_changes[table][id]) _changes[table][id] = {};
+  _changes[table][id].is_available = checked;
+  const card = document.getElementById(cardId);
+  const lbl = document.getElementById('lbl_' + id);
+  if (card) card.classList.toggle('sold-out', !checked);
+  if (lbl) lbl.textContent = checked ? 'In Stock' : 'Sold Out';
+  updateChangeBadge();
+}
+
+function markPriceChange(id, table, val) {
+  if (!_changes[table]) _changes[table] = {};
+  if (!_changes[table][id]) _changes[table][id] = {};
+  _changes[table][id].price = parseFloat(val) || null;
+  updateChangeBadge();
+}
+
+// ── Specials ─────────────────────────────────────────────────────────────────
+function renderSpecialsPanel() {
+  const panel = document.getElementById('panel_specials');
+  if (!panel) return;
+  rebuildSpecialsPanel();
+}
+
+function rebuildSpecialsPanel() {
+  const panel = document.getElementById('panel_specials');
+  if (!panel) return;
+  const existing = (_data.specials || []).filter(s => !_changes.removedSpecials.has(s.id));
+  let html = '';
+
+  if (existing.length) {
+    html += `<div class="section"><div class="section-label">Active Specials</div>`;
+    existing.forEach(s => {
+      const price = s.price ? ` — $${Number(s.price).toFixed(2)}` : '';
+      html += `<div class="special-card">
+        <button class="remove-btn" onclick="removeSpecial('${s.id}')">✕</button>
+        <div class="special-name">${esc(s.special_name)}</div>
+        ${s.price ? `<div class="special-price">$${Number(s.price).toFixed(2)}</div>` : ''}
+        ${s.description ? `<div class="special-desc">${esc(s.description)}</div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  _changes.newSpecials.forEach((s, i) => {
+    html += `<div class="special-card" style="border-color:#86efac;background:#f0fdf4;">
+      <button class="remove-btn" onclick="removeNewSpecial(${i})">✕</button>
+      <div class="special-name">✨ ${esc(s.name)}</div>
+      ${s.price ? `<div class="special-price">$${Number(s.price).toFixed(2)}</div>` : ''}
+      ${s.desc ? `<div class="special-desc">${esc(s.desc)}</div>` : ''}
+    </div>`;
+  });
+
+  html += `<div class="section">
+    <div class="section-label">Add Today's Special</div>
+    <div class="add-special-card">
+      <input id="sp_name" type="text" placeholder="Special name (e.g. Mahi Tacos)" inputmode="text">
+      <div class="add-special-row">
+        <input id="sp_price" type="number" step="0.01" min="0" placeholder="Price (optional)" inputmode="decimal">
+        <button class="btn-add" onclick="addSpecial()">+ Add</button>
+      </div>
+      <textarea id="sp_desc" placeholder="Description (optional)"></textarea>
+    </div>
+  </div>`;
+
+  panel.innerHTML = html;
+}
+
+function removeSpecial(id) {
+  _changes.removedSpecials.add(id);
+  updateChangeBadge();
+  rebuildSpecialsPanel();
+}
+
+function removeNewSpecial(idx) {
+  _changes.newSpecials.splice(idx, 1);
+  updateChangeBadge();
+  rebuildSpecialsPanel();
+}
+
+function addSpecial() {
+  const name = document.getElementById('sp_name')?.value?.trim();
+  if (!name) { alert('Enter a special name.'); return; }
+  const price = parseFloat(document.getElementById('sp_price')?.value) || null;
+  const desc = document.getElementById('sp_desc')?.value?.trim() || '';
+  _changes.newSpecials.push({ name, price, desc });
+  updateChangeBadge();
+  rebuildSpecialsPanel();
+}
+
+function countChanges() {
+  let n = 0;
+  Object.keys(_changes.items || {}).forEach(id => { n++; });
+  Object.keys(_changes.drinks || {}).forEach(id => { n++; });
+  n += _changes.newSpecials.length;
+  n += _changes.removedSpecials.size;
+  return n;
+}
+
+function updateChangeBadge() {
+  const n = countChanges();
+  const badge = document.getElementById('changeBadge');
+  if (n > 0) { badge.textContent = n; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
+}
+
+async function submitChanges() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const payload = {
+      entity_id: _entityId,
+      item_changes: Object.entries(_changes.items || {}).map(([id, ch]) => ({ id, table: 'menu_items', ...ch })),
+      drink_changes: Object.entries(_changes.drinks || {}).map(([id, ch]) => ({ id, table: 'drink_items', ...ch })),
+      new_specials: _changes.newSpecials,
+      remove_specials: Array.from(_changes.removedSpecials),
+    };
+
+    const res = await fetch(`${API}/menu-editor-save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+
+    const total = (json.items_updated || 0) + (json.drinks_updated || 0) +
+                  (json.specials_added || 0) + (json.specials_removed || 0);
+    document.getElementById('successCount').textContent =
+      total ? `${total} change${total !== 1 ? 's' : ''} saved` : 'No changes — menu confirmed for today';
+    document.getElementById('successScreen').classList.add('show');
+  } catch (err) {
+    alert('Save failed: ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Menu Update';
+  }
+}
+
+loadMenu();
+</script>
+</body>
+</html>

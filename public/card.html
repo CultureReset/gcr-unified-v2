@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#00ada8">
+<title>Matt Johnson — Gulf Coast Radar / CyberCheck</title>
+<meta name="description" content="Matt Johnson — Gulf Coast Radar & CyberCheck. Tap to save contact.">
+<link rel="icon" href="/favicon.svg">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0b1220;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px 48px;background:radial-gradient(1200px 600px at 50% -10%, rgba(0,173,168,.18), transparent 60%), #0b1220}
+  .card{width:100%;max-width:420px;background:#111827;border:1px solid #1f2937;border-radius:24px;padding:28px 22px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .avatar{width:128px;height:128px;border-radius:50%;margin:0 auto 16px;display:block;object-fit:cover;border:3px solid #00ada8;background:#0b1220}
+  h1{margin:0;text-align:center;font-size:26px;font-weight:700;letter-spacing:.2px}
+  .title{margin:6px 0 0;text-align:center;color:#94a3b8;font-size:15px;font-weight:500}
+  .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:22px 0 18px}
+  .action{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;background:#0b1220;border:1px solid #1f2937;border-radius:14px;text-decoration:none;color:#e2e8f0;font-size:11px;font-weight:600;transition:transform .1s, border-color .15s, background .15s}
+  .action:active{transform:scale(.96)}
+  .action:hover{border-color:#00ada8;background:#0e1626}
+  .action svg{width:22px;height:22px;stroke:#00ada8;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .save{grid-column:1/-1;flex-direction:row;gap:10px;padding:14px;background:#00ada8;border-color:#00ada8;color:#fff;font-size:15px;font-weight:700}
+  .save:hover{background:#009590;border-color:#009590}
+  .save svg{stroke:#fff;width:20px;height:20px}
+  .links{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .link{display:flex;align-items:center;gap:14px;padding:14px 16px;background:#0b1220;border:1px solid #1f2937;border-radius:14px;text-decoration:none;color:#e2e8f0;font-size:15px;font-weight:600;transition:border-color .15s, background .15s, transform .1s}
+  .link:active{transform:scale(.99)}
+  .link:hover{border-color:#00ada8;background:#0e1626}
+  .link .icon{width:36px;height:36px;border-radius:10px;background:rgba(0,173,168,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;line-height:1}
+  .link .icon svg{width:18px;height:18px;stroke:#00ada8;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .link .meta{display:flex;flex-direction:column;min-width:0}
+  .link .meta b{font-weight:700;font-size:15px}
+  .link .meta span{font-size:12px;color:#94a3b8;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .link .chev{margin-left:auto;color:#475569;font-size:20px;line-height:1}
+  .share{margin-top:18px;padding:16px;background:#0b1220;border:1px solid #1f2937;border-radius:16px}
+  .share h2{margin:0 0 4px;font-size:16px;font-weight:700}
+  .share p{margin:0 0 12px;font-size:12px;color:#94a3b8}
+  .share input,.share textarea{width:100%;padding:11px 13px;background:#111827;border:1px solid #1f2937;border-radius:10px;color:#e2e8f0;font-size:14px;font-family:inherit;margin-bottom:8px;outline:none;transition:border-color .15s}
+  .share input:focus,.share textarea:focus{border-color:#00ada8}
+  .share textarea{resize:vertical;min-height:66px}
+  .share button{width:100%;padding:13px;background:#00ada8;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+  .share button:hover{background:#009590}
+  .share button:disabled{opacity:.6;cursor:not-allowed}
+  .share .ok{text-align:center;padding:20px;color:#22c55e;font-weight:600;font-size:15px}
+  .share .err{color:#f87171;font-size:12px;margin-top:6px;text-align:center}
+  footer{text-align:center;margin-top:22px;color:#64748b;font-size:12px}
+  footer a{color:#94a3b8;text-decoration:none}
+
+  /* Edit mode */
+  .edit-btn{display:block;width:100%;margin-top:14px;padding:11px;background:transparent;border:1px solid #1f2937;border-radius:10px;color:#475569;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+  .edit-btn:hover{border-color:#00ada8;color:#00ada8}
+  .edit-panel{display:none;margin-top:14px;background:#0b1220;border:1px solid #1f2937;border-radius:16px;padding:16px}
+  .edit-panel.open{display:block}
+  .edit-panel h3{margin:0 0 12px;font-size:15px;font-weight:700;color:#e2e8f0}
+  .link-row-edit{display:grid;grid-template-columns:1fr 1fr 36px;gap:8px;margin-bottom:8px;align-items:center}
+  .link-row-edit input{padding:9px 11px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .15s}
+  .link-row-edit input:focus{border-color:#00ada8}
+  .del-btn{width:36px;height:36px;background:#1f2937;border:none;border-radius:8px;color:#f87171;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+  .del-btn:hover{background:#2d1f1f}
+  .add-link-form{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #1f2937}
+  .add-link-form input{padding:9px 11px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#e2e8f0;font-size:13px;font-family:inherit;outline:none;width:100%;transition:border-color .15s}
+  .add-link-form input:focus{border-color:#00ada8}
+  .add-link-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .add-link-btn{padding:10px;background:#00ada8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:background .15s}
+  .add-link-btn:hover{background:#009590}
+  .save-order-btn{margin-top:10px;padding:10px;background:#1f2937;color:#94a3b8;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;transition:all .15s}
+  .save-order-btn:hover{background:#374151;color:#e2e8f0}
+  .edit-label{font-size:11px;color:#475569;font-weight:600;margin-bottom:4px;display:block}
+
+  @media (prefers-color-scheme: light){
+    body{background:radial-gradient(1200px 600px at 50% -10%, rgba(0,173,168,.22), transparent 60%), #f1f5f9;color:#0f172a}
+    .card{background:#ffffff;border-color:#e2e8f0;box-shadow:0 20px 60px rgba(15,23,42,.12)}
+    .action,.link,.share,.edit-panel{background:#f8fafc;border-color:#e2e8f0;color:#0f172a}
+    .action:hover,.link:hover{background:#f1f5f9}
+    .link .meta span,.share p{color:#64748b}
+    .share input,.share textarea,.link-row-edit input,.add-link-form input{background:#fff;border-color:#e2e8f0;color:#0f172a}
+    h1{color:#0f172a}
+    footer a{color:#475569}
+    .link-row-edit input,.add-link-form input{background:#fff;color:#0f172a}
+  }
+</style>
+</head>
+<body>
+  <main class="card">
+    <img class="avatar" src="/gcr-logo.png" alt="Gulf Coast Radar / CyberCheck">
+    <h1>Matt Johnson</h1>
+    <p class="title">Gulf Coast Radar &nbsp;·&nbsp; CyberCheck</p>
+
+    <div class="actions">
+      <a class="action" href="tel:+12058104950" aria-label="Call">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>Call</span>
+      </a>
+      <a class="action" href="sms:+12058104950" aria-label="Text">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Text</span>
+      </a>
+      <a class="action" href="mailto:info@gulfcoastalhub.com" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Email</span>
+      </a>
+      <a class="action" href="https://wa.me/12058104950" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>WhatsApp</span>
+      </a>
+
+      <a class="action save" id="saveBtn" href="#" aria-label="Save to contacts">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+        <span>Save Contact</span>
+      </a>
+    </div>
+
+    <div class="links" id="linksContainer"></div>
+
+    <button class="edit-btn" id="editToggle">⚙ Manage Links</button>
+
+    <div class="edit-panel" id="editPanel">
+      <h3>Your Links</h3>
+      <div id="editList"></div>
+
+      <div class="add-link-form">
+        <span class="edit-label">Add a new link</span>
+        <input type="text" id="newName" placeholder="Link name  (e.g. Gulf Coast Radar)">
+        <input type="url" id="newUrl" placeholder="URL  (e.g. https://gulfcoastradar.com)">
+        <div class="row2">
+          <input type="text" id="newSub" placeholder="Subtitle  (e.g. gulfcoastradar.com)">
+          <input type="text" id="newEmoji" placeholder="Emoji icon  (e.g. 🌊)">
+        </div>
+        <button class="add-link-btn" id="addLinkBtn">+ Add Link</button>
+      </div>
+
+      <button class="save-order-btn" id="saveOrderBtn">✓ Done — Close Editor</button>
+    </div>
+
+    <section class="share">
+      <h2>Share your info with me</h2>
+      <p>Drop your details — I'll save them and reach out.</p>
+      <form id="shareForm" autocomplete="on">
+        <input type="text"  name="name"  placeholder="Your name"          required autocomplete="name">
+        <input type="tel"   name="phone" placeholder="Phone number"       required autocomplete="tel">
+        <input type="email" name="email" placeholder="Email (optional)"            autocomplete="email">
+        <input type="text"  name="business_name" placeholder="Company (optional)"  autocomplete="organization">
+        <textarea name="message" placeholder="Note (optional)"></textarea>
+        <button type="submit" id="shareBtn">Send to Matt</button>
+        <div id="shareMsg"></div>
+      </form>
+    </section>
+
+    <footer>&copy; <span id="yr"></span> CyberCheck Inc.</footer>
+  </main>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  const DEFAULT_LINKS = [
+    { name: 'Gulf Coast Radar', url: 'https://gulfcoastradar.com', sub: 'gulfcoastradar.com', emoji: '🌊' },
+    { name: 'Gulf Coast Hub',   url: 'https://gulfcoastalhub.com', sub: 'gulfcoastalhub.com', emoji: '🏠' },
+    { name: 'CyberCheck',       url: 'https://cybercheckinc.com',  sub: 'cybercheckinc.com',  emoji: '🧬' }
+  ];
+
+  function loadLinks() {
+    try {
+      const saved = localStorage.getItem('card_links');
+      return saved ? JSON.parse(saved) : DEFAULT_LINKS;
+    } catch(e) { return DEFAULT_LINKS; }
+  }
+
+  function saveLinks(links) {
+    localStorage.setItem('card_links', JSON.stringify(links));
+  }
+
+  function renderLinks() {
+    const links = loadLinks();
+    const container = document.getElementById('linksContainer');
+    container.innerHTML = links.map(l => `
+      <a class="link" href="${l.url}" target="_blank" rel="noopener">
+        <div class="icon">${l.emoji || '🔗'}</div>
+        <div class="meta"><b>${l.name}</b><span>${l.sub || l.url}</span></div>
+        <span class="chev">›</span>
+      </a>
+    `).join('');
+  }
+
+  function renderEditList() {
+    const links = loadLinks();
+    const list = document.getElementById('editList');
+    list.innerHTML = links.map((l, i) => `
+      <div class="link-row-edit">
+        <input type="text" value="${l.name}" data-i="${i}" data-field="name" placeholder="Name">
+        <input type="url"  value="${l.url}"  data-i="${i}" data-field="url"  placeholder="URL">
+        <button class="del-btn" data-del="${i}">×</button>
+      </div>
+      <div class="link-row-edit" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+        <input type="text" value="${l.sub   || ''}" data-i="${i}" data-field="sub"   placeholder="Subtitle">
+        <input type="text" value="${l.emoji || ''}" data-i="${i}" data-field="emoji" placeholder="Emoji">
+      </div>
+    `).join('');
+
+    list.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', function() {
+        const links = loadLinks();
+        links[this.dataset.i][this.dataset.field] = this.value;
+        saveLinks(links);
+        renderLinks();
+      });
+    });
+
+    list.querySelectorAll('.del-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const links = loadLinks();
+        links.splice(Number(this.dataset.del), 1);
+        saveLinks(links);
+        renderLinks();
+        renderEditList();
+      });
+    });
+  }
+
+  document.getElementById('editToggle').addEventListener('click', function() {
+    const panel = document.getElementById('editPanel');
+    const open = panel.classList.toggle('open');
+    this.textContent = open ? '✕ Close Editor' : '⚙ Manage Links';
+    if (open) renderEditList();
+  });
+
+  document.getElementById('saveOrderBtn').addEventListener('click', function() {
+    document.getElementById('editPanel').classList.remove('open');
+    document.getElementById('editToggle').textContent = '⚙ Manage Links';
+  });
+
+  document.getElementById('addLinkBtn').addEventListener('click', function() {
+    const name  = document.getElementById('newName').value.trim();
+    const url   = document.getElementById('newUrl').value.trim();
+    const sub   = document.getElementById('newSub').value.trim();
+    const emoji = document.getElementById('newEmoji').value.trim();
+    if (!name || !url) return alert('Name and URL are required.');
+    const links = loadLinks();
+    links.push({ name, url, sub: sub || url.replace(/^https?:\/\//, ''), emoji: emoji || '🔗' });
+    saveLinks(links);
+    renderLinks();
+    renderEditList();
+    document.getElementById('newName').value = '';
+    document.getElementById('newUrl').value = '';
+    document.getElementById('newSub').value = '';
+    document.getElementById('newEmoji').value = '';
+  });
+
+  renderLinks();
+
+  // Save contact
+  const vcard = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'N:Johnson;Matt;;;',
+    'FN:Matt Johnson',
+    'ORG:Gulf Coast Radar / CyberCheck',
+    'TEL;TYPE=CELL,VOICE:+12058104950',
+    'EMAIL;TYPE=WORK:info@gulfcoastalhub.com',
+    'URL;TYPE=WORK:https://gulfcoastradar.com',
+    'URL:https://gulfcoastalhub.com',
+    'END:VCARD'
+  ].join('\r\n');
+
+  document.getElementById('saveBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'Matt-Johnson.vcf';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  // Lead form
+  const API_BASE = 'https://gcr-api-clean.vercel.app';
+  const form = document.getElementById('shareForm');
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('shareBtn');
+    const msg = document.getElementById('shareMsg');
+    msg.className = ''; msg.textContent = '';
+    btn.disabled = true; btn.textContent = 'Sending…';
+    const fd = new FormData(form);
+    const payload = {
+      name:          fd.get('name')  || '',
+      phone:         fd.get('phone') || '',
+      email:         fd.get('email') || '',
+      business_name: fd.get('business_name') || '',
+      business_type: fd.get('message') || '',
+      source:        'nfc-card-matt'
+    };
+    try {
+      const res = await fetch(API_BASE + '/api/gcr/nfc-card-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      form.innerHTML = '<div class="ok">Thanks! Your info was sent to Matt. He\'ll be in touch shortly.</div>';
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'Send to Matt';
+      msg.className = 'err'; msg.textContent = 'Something went wrong. Call or text (205) 810-4950.';
+    }
+  });
+</script>
+</body>
+</html>

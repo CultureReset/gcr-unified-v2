@@ -1,0 +1,132 @@
+.saves-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+.saves-hero {
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 20%, #87CEFA 40%, #4A90E2 80%, #3a7bd5 100%);
+  padding: 32px 20px;
+  text-align: center;
+  color: white;
+}
+
+.saves-hero h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.saves-hero p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.saves-content {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.saves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.save-card {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.save-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.save-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.save-content {
+  padding: 12px;
+}
+
+.save-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0d2137;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.save-subtitle {
+  font-size: 0.78rem;
+  color: #666;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.save-category {
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0 0 8px;
+  text-transform: capitalize;
+}
+
+.save-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-btn.primary {
+  background: #14B8A6;
+  color: white;
+}
+
+.save-btn.primary:hover {
+  background: #0d9488;
+}
+
+.save-btn.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.save-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .saves-hero h1 {
+    font-size: 1.4rem;
+  }
+
+  .saves-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}

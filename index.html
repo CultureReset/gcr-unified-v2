@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Many external photo CDNs (rental managers, booking platforms) refuse
+         hotlinked requests that carry a foreign Referer; sending none makes
+         image requests look like direct opens, which they allow. -->
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#0a0a14" />
+    <meta name="description" content="Discover restaurants, events, activities, and places to stay on the Gulf Coast. Plan your perfect trip with real-time recommendations." />
+    <meta name="keywords" content="Gulf Coast, restaurants, events, travel, tourism, discovery" />
+    <meta name="author" content="Gulf Coast Radar" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="GCR" />
+
+    <!-- Open Graph for social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gulf Coast Radar - Discover Local Experiences" />
+    <meta property="og:description" content="Find restaurants, events, and activities on the Gulf Coast. Plan and share your trip with friends." />
+    <meta property="og:site_name" content="Gulf Coast Radar" />
+
+    <!-- Icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/gcr-logo.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/gcr-logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/gcr-logo.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/gcr-logo.png" />
+
+    <title>Gulf Coast Radar - Discover & Plan Your Trip</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

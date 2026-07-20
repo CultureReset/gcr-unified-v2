@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/:slug/profile",
+      "destination": "/song-request.html?slug=:slug"
+    },
+    {
+      "source": "/p/:slug",
+      "destination": "/biz.html"
+    },
+    {
+      "source": "/book/:slug/:app",
+      "destination": "/book.html"
+    },
+    {
+      "source": "/u/:code",
+      "destination": "/user.html"
+    },
+    {
+      "source": "/r/:slug",
+      "destination": "/verified-review.html"
+    },
+    {
+      "source": "/reviews/:slug",
+      "destination": "/review-wall.html"
+    },
+    {
+      "source": "/manage/:id",
+      "destination": "/manage.html"
+    },
+    {
+      "source": "/waiver/:slug",
+      "destination": "/waiver.html"
+    },
+    {
+      "source": "/developers/reviews",
+      "destination": "/reviews-api.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

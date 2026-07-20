@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book — Loading…</title>
+<!--
+  STANDALONE CHECKOUT — /book/<slug>/<appId> (or book.html?b=&app=).
+  A full-page, industry-agnostic booking flow driven entirely by the
+  app's manifest: pick a service (if the business sells priced
+  services), pick a date (availability-checked), enter details, pay a
+  deposit (Stripe, if the business configured payments) or send the
+  request. Nothing here knows what a charter, salon, or condo is.
+-->
+<style>
+  :root{ --accent:#22c3a6; --text:#1d2329; --muted:#66758a; --soft:#f6f4f0; --line:#e6e0d8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#efece7;color:var(--text);min-height:100vh;padding:18px 12px}
+  .wrap{max-width:600px;margin:0 auto}
+  @media(min-width:920px){ .wrap{max-width:980px;display:grid;grid-template-columns:1fr 370px;gap:22px;align-items:start} }
+  .shell{background:#fff;border-radius:26px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(35,28,22,.14)}
+  /* order summary — the thing you're paying for, visible the whole way */
+  .side{display:none}
+  @media(min-width:920px){ .side{display:block;position:sticky;top:18px} }
+  .scard{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 12px 36px rgba(35,28,22,.10)}
+  .scard .simg{height:190px;background-size:cover;background-position:center;display:grid;place-items:center;font-size:52px;color:#fff}
+  .scard .sbody{padding:16px 18px 18px}
+  .scard .sname{font-size:16px;font-weight:900;letter-spacing:-.02em}
+  .scard .smeta{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .srow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:13.5px;border-bottom:1px dashed #eee7de}
+  .srow:last-of-type{border-bottom:none}
+  .srow span{color:var(--muted)}
+  .srow b{font-weight:700;text-align:right}
+  .stot{display:flex;justify-content:space-between;padding-top:12px;margin-top:8px;border-top:2px solid var(--text);font-size:16px;font-weight:900}
+  .sdue{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:4px}
+  .strust{font-size:11px;color:#a39a8d;text-align:center;padding:10px 14px;border-top:1px solid var(--line);background:#fbfaf8}
+  /* mobile: compact live strip pinned above the steps */
+  .mini{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:12px;box-shadow:0 8px 22px rgba(35,28,22,.08)}
+  @media(min-width:920px){ .mini{display:none} }
+  .mini .mimg{width:52px;height:52px;border-radius:12px;background-size:cover;background-position:center;display:grid;place-items:center;font-size:24px;color:#fff;flex-shrink:0}
+  .mini b{font-size:13.5px;display:block;letter-spacing:-.01em}
+  .mini small{font-size:11.5px;color:var(--muted);display:block}
+  .mini .mtot{margin-left:auto;font-weight:900;font-size:15px;white-space:nowrap}
+  .top{padding:18px 20px;color:#fff;display:flex;align-items:center;gap:12px}
+  .top .av{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:20px;background-size:cover;background-position:center;flex-shrink:0}
+  .top b{font-size:16px;display:block}
+  .top span{font-size:12px;opacity:.9}
+  .top a{margin-left:auto;color:#fff;text-decoration:none;font-size:13px;opacity:.9}
+  .steps{display:flex;gap:6px;padding:14px 20px 0}
+  .wstep{flex:1;height:4px;border-radius:99px;background:#e8e2d9}
+  .wstep.on{background:var(--accent)}
+  .body{padding:18px 20px 26px}
+  h2{margin:4px 0 14px;font-size:20px;letter-spacing:-.02em}
+  label{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin:12px 0 5px}
+  input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;background:#fbfaf8}
+  .btnrow{display:flex;gap:10px;margin-top:20px}
+  .btn{flex:1;min-height:50px;border:none;border-radius:14px;font-weight:900;font-size:15px;cursor:pointer}
+  .btn.next{color:#fff;flex:2}
+  .btn.back{background:var(--soft);color:var(--text)}
+  .svc{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;background:#fff}
+  .svc.sel{border-color:var(--accent);background:#f2fbf9}
+  .svc b{font-size:15px;display:block}
+  .svc small{color:var(--muted);display:block;margin-top:2px}
+  .svc .pr{font-weight:900;font-size:16px;white-space:nowrap}
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .cal-head button{background:var(--soft);border:none;border-radius:9px;width:34px;height:34px;font-size:15px;cursor:pointer}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-grid .dl{text-align:center;font-size:10.5px;font-weight:800;color:var(--muted);padding:4px 0}
+  .day{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent}
+  .day:hover{background:var(--soft)}
+  .day.off{color:#c8c0b6;cursor:not-allowed;text-decoration:line-through}
+  .day.off:hover{background:transparent}
+  .day.sel{background:var(--accent);color:#fff}
+  .day.blank{cursor:default}
+  .day.blank:hover{background:transparent}
+  .legend{display:flex;gap:14px;margin-top:10px;font-size:11.5px;color:var(--muted)}
+  .sum{background:var(--soft);border-radius:14px;padding:14px;margin-bottom:6px}
+  .sum .r{display:flex;justify-content:space-between;padding:5px 0;font-size:14px}
+  .sum .r b{font-weight:800}
+  .sum .tot{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-size:16px}
+  .err{background:#fdecec;color:#b03030;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px;display:none}
+  .ok{text-align:center;padding:36px 10px}
+  .ok .big{font-size:52px}
+  .center{min-height:70vh;display:grid;place-items:center;color:#8a8074;font-weight:700}
+  #pay-el{margin-top:14px}
+  .paynote{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<div id="root" class="center">Loading…</div>
+
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+var PAGE=null, BLOCK=null, AVAIL={blocked:[],full:[]};
+var step=0, sel={ service:null, resource:null, date:null, endDate:null, time:null, values:{}, party:{}, addons:[], promo:null };
+/* universal handoff: any page can stage a cart/prefill for this checkout
+   (sessionStorage cc_prefill:<slug>:<app> = {values:{...}, price:N, lines:[...]}) */
+var PREFILL=null;
+var SLOTS=null; // per-date slot availability (slots mode)
+function bmode(){ return (BLOCK && BLOCK.booking && BLOCK.booking.mode) || 'date'; }
+function hasResources(){ return !!(BLOCK && BLOCK.resources && BLOCK.resources.length); }
+var stripe=null, elements=null, paymentIntentId=null;
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function params(){
+  var m = location.pathname.match(/\/book\/([a-z0-9-]+)\/([a-z0-9-]+)/i);
+  if(m) return { slug:m[1], app:m[2] };
+  var q = new URLSearchParams(location.search);
+  return { slug:q.get('b'), app:q.get('app') };
+}
+function accent(){ return (PAGE&&PAGE.business&&PAGE.business.accent)||'#22c3a6'; }
+var P = params();
+
+/* which manifest field the chosen service maps into, if any */
+var SERVICE_KEYS = ['service','trip','boat','session','item'];
+function serviceField(){
+  var keys = (BLOCK.fields||[]).map(function(f){return f.key;});
+  for(var i=0;i<SERVICE_KEYS.length;i++) if(keys.indexOf(SERVICE_KEYS[i])!==-1) return SERVICE_KEYS[i];
+  return null;
+}
+function services(){ return (PAGE.data && PAGE.data.services) || []; }
+function hasServiceStep(){ return !hasResources() && serviceField() && services().length > 0; }
+function hasDateStep(){
+  if(bmode()==='none') return false; // gift cards, memberships, pickup orders
+  return (BLOCK.fields||[]).some(function(f){ return f.key==='date'; }) || bmode()!=='date';
+}
+function partyCfg(){ return (BLOCK.booking && BLOCK.booking.party) || null; }
+function partyTotal(){
+  var p = partyCfg(); if(!p) return 0;
+  return p.tiers.reduce(function(s,t){ return s + (sel.party[t.key]||0); }, 0);
+}
+function hasAddons(){ return !!(BLOCK.addons && BLOCK.addons.length); }
+function detailFields(){
+  var skip = {};
+  if(hasDateStep()){
+    skip.date=1;                       // picked on the calendar step
+    if(bmode()==='range') skip.end_date=1;
+    if(bmode()==='slots') skip.time=1; // picked with the date
+  }
+  var sf = serviceField(); if(sf && hasServiceStep()) skip[sf]=1;
+  var pc = partyCfg(); if(pc) pc.tiers.forEach(function(t){ skip[t.key]=1; }); // party step covers these
+  if(PREFILL) Object.keys(PREFILL.values||{}).forEach(function(k){ skip[k]=1; }); // cart already filled these
+  return (BLOCK.fields||[]).filter(function(f){ return !skip[f.key]; });
+}
+function stepList(){
+  var l = [];
+  if(hasResources()) l.push('resource');
+  if(hasServiceStep()) l.push('service');
+  if(partyCfg()) l.push('party');
+  if(hasDateStep()) l.push('date');
+  if(hasAddons()) l.push('addons');
+  l.push('details','confirm');
+  return l;
+}
+
+/* ── pricing ── */
+function nights(){
+  if(bmode()!=='range' || !sel.date || !sel.endDate) return 1;
+  var a=new Date(sel.date+'T00:00:00Z'), b=new Date(sel.endDate+'T00:00:00Z');
+  return Math.max(1, Math.round((b-a)/86400000));
+}
+function basePrice(){
+  if(PREFILL && PREFILL.price) return parseFloat(PREFILL.price)||0; // cart handoff
+  var p = 0;
+  if(sel.resource){
+    var r = sel.resource;
+    p = bmode()==='range' ? (r.rate_night||r.rate_full||0) * nights() : (r.rate_full || r.rate_hourly || 0);
+  } else if(sel.service && sel.service.price){
+    p = parseFloat(sel.service.price)||0;
+  }
+  // priced fields: the chosen option carries its own price
+  // ("100" or "Monthly Unlimited $89" both work)
+  (BLOCK.fields||[]).forEach(function(f){
+    if(!f.priced || !sel.values[f.key]) return;
+    var m = String(sel.values[f.key]).match(/\$?\s*(\d+(?:\.\d{1,2})?)(?!.*\d)/);
+    if(m) p += parseFloat(m[1]);
+  });
+  // per-person tiers: 2 adults × $35 + 1 kid × $20
+  var pc = partyCfg();
+  if(pc) pc.tiers.forEach(function(t){ p += (sel.party[t.key]||0) * (t.price||0); });
+  return p;
+}
+function addonPrice(a){
+  var mult = a.per==='person' ? Math.max(1, partyTotal())
+    : a.per==='day' ? nights() : 1;
+  return (a.price||0) * mult;
+}
+function addonsTotal(){
+  var tot = 0;
+  (BLOCK.addons||[]).forEach(function(a){ if(sel.addons.indexOf(a.id)!==-1) tot += addonPrice(a); });
+  return tot;
+}
+function discount(sub){
+  if(!sel.promo) return 0;
+  if(sel.promo.percent) return Math.min(sub, sub * sel.promo.percent / 100);
+  if(sel.promo.amount) return Math.min(sub, sel.promo.amount);
+  return 0;
+}
+function price(){
+  var sub = basePrice() + addonsTotal();
+  return Math.max(0, sub - discount(sub));
+}
+function dueNow(){
+  var p = price(); if(!p || !PAGE.payment) return 0;
+  if(PAGE.payment.mode === 'Deposit only') return Math.round(p * (PAGE.payment.deposit||0)) / 100 * 1; // deposit% of price
+  return p;
+}
+
+function render(){
+  var b = PAGE.business||{};
+  document.title = 'Book — '+(b.name||'');
+  var steps = stepList();
+  var cur = steps[step];
+  var host = document.getElementById('root');
+  host.className='';
+
+  var inner = '';
+  if(cur==='resource'){
+    inner = '<h2>Choose yours</h2>'+
+      BLOCK.resources.map(function(r,i){
+        var isSel = sel.resource && sel.resource.id===r.id;
+        var rate = r.rate_night ? '$'+r.rate_night+'/night' : r.rate_full ? '$'+r.rate_full+'/day' : r.rate_hourly ? '$'+r.rate_hourly+'/hr' : '';
+        return '<div class="svc'+(isSel?' sel':'')+'" onclick="pickResource('+i+')">'+
+          (r.url?'<div style="width:64px;height:48px;border-radius:10px;background:url(\''+esc(r.url)+'\') center/cover;flex-shrink:0"></div>':'')+
+          '<div style="flex:1"><b>'+esc(r.name)+'</b><small>'+esc(r.desc||'')+'</small></div>'+
+          (rate?'<span class="pr">'+esc(rate)+'</span>':'')+'</div>';
+      }).join('')+
+      btnRow(false, sel.resource ? 'Continue →' : 'Pick one to continue');
+  }
+  else if(cur==='service'){
+    inner = '<h2>Choose your '+esc(serviceField())+'</h2>'+
+      services().map(function(s,i){
+        var isSel = sel.service && sel.service.name===s.name;
+        return '<div class="svc'+(isSel?' sel':'')+'" onclick="pickService('+i+')">'+
+          '<div><b>'+esc(s.name)+'</b><small>'+esc([s.duration,s.desc].filter(Boolean).join(' · '))+
+          (s.capacity?' · up to '+esc(s.capacity)+' guests':'')+'</small></div>'+
+          (s.price?'<span class="pr">$'+esc(s.price)+'</span>':'')+'</div>';
+      }).join('')+
+      btnRow(false, sel.service ? 'Continue →' : 'Pick one to continue');
+  }
+  else if(cur==='party'){
+    var pc = partyCfg();
+    inner = '<h2>Who\'s coming?</h2>'+
+      pc.tiers.map(function(t){
+        var q = sel.party[t.key]||0;
+        return '<div class="svc" style="cursor:default">'+
+          '<div><b style="text-transform:capitalize">'+esc(t.label)+'</b>'+(t.price?'<small>$'+t.price+' each</small>':'<small>Free</small>')+'</div>'+
+          '<span style="display:flex;align-items:center;gap:12px">'+
+            '<button type="button" onclick="partyAdd(\''+esc(t.key)+'\',-1)" style="width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:900;font-size:16px;cursor:pointer'+(q?'':';opacity:.35')+'">−</button>'+
+            '<b style="min-width:18px;text-align:center;font-size:16px">'+q+'</b>'+
+            '<button type="button" onclick="partyAdd(\''+esc(t.key)+'\',1)" style="width:36px;height:36px;border-radius:10px;border:none;background:'+accent()+';color:#fff;font-weight:900;font-size:16px;cursor:pointer">+</button>'+
+          '</span></div>';
+      }).join('')+
+      ((BLOCK.booking&&BLOCK.booking.maxParty)?'<div class="paynote">Up to '+BLOCK.booking.maxParty+' per booking.</div>':'')+
+      btnRow(step>0, partyTotal()>0 ? 'Continue →' : 'Add at least one person');
+  }
+  else if(cur==='addons'){
+    inner = '<h2>Add anything extra?</h2>'+
+      BLOCK.addons.map(function(a){
+        var on = sel.addons.indexOf(a.id)!==-1;
+        return '<div class="svc'+(on?' sel':'')+'" onclick="toggleAddon(\''+esc(a.id)+'\')">'+
+          (a.url?'<div style="width:56px;height:44px;border-radius:10px;background:url(\''+esc(a.url)+'\') center/cover;flex-shrink:0"></div>':'')+
+          '<div style="flex:1"><b>'+esc(a.name)+'</b><small>'+esc(a.desc||'')+(a.per&&a.per!=='booking'?(a.desc?' · ':'')+'per '+esc(a.per):'')+'</small></div>'+
+          '<span class="pr">'+(on?'✓ ':'+')+'$'+addonPrice(a).toFixed(0)+'</span></div>';
+      }).join('')+
+      btnRow(true, sel.addons.length ? 'Continue →' : 'No thanks, continue →');
+  }
+  else if(cur==='date'){
+    var heading = bmode()==='range' ? 'Pick your dates' : 'Pick a date';
+    var hint = bmode()==='range' ? (sel.date && !sel.endDate ? 'Now tap your check-out date' : 'Tap check-in, then check-out') : '';
+    var ready = bmode()==='range' ? (sel.date && sel.endDate) : (bmode()==='slots' ? (sel.date && sel.time) : !!sel.date);
+    inner = '<h2>'+heading+'</h2>'+(hint?'<div class="star-label">'+hint+'</div>':'')+'<div id="cal"></div>'+
+      '<div id="slot-host"></div>'+
+      '<div class="legend"><span>⬜ available</span><span><s>x</s> unavailable</span>'+
+      (bmode()==='range'&&sel.date&&sel.endDate?'<span><b>'+nights()+' night'+(nights()>1?'s':'')+'</b></span>':'')+'</div>'+
+      btnRow(true, ready ? 'Continue →' : (bmode()==='slots'&&sel.date?'Pick a time':'Pick a date'));
+  }
+  else if(cur==='details'){
+    inner = '<h2>Your details</h2>'+
+      detailFields().map(function(f){
+        var v = sel.values[f.key]||'';
+        var id='df-'+f.key;
+        if(f.type==='select'&&f.options) return '<label>'+esc(f.label||f.key)+'</label><select id="'+id+'" onchange="sel.values[\''+f.key+'\']=this.value"><option value="">Choose…</option>'+f.options.map(function(o){return '<option'+(v===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
+        if(f.type==='textarea') return '<label>'+esc(f.label||f.key)+'</label><textarea id="'+id+'" rows="2" oninput="sel.values[\''+f.key+'\']=this.value">'+esc(v)+'</textarea>';
+        var t = f.type==='number'?'number':f.type==='date'?'date':f.key==='phone'?'tel':'text';
+        return '<label>'+esc(f.label||f.key)+'</label><input id="'+id+'" type="'+t+'" value="'+esc(v)+'" oninput="sel.values[\''+f.key+'\']=this.value">';
+      }).join('')+
+      btnRow(true, 'Review →');
+  }
+  else if(cur==='confirm'){
+    var due = dueNow();
+    var rows = '';
+    if(sel.resource) rows += sumRow('Selection', sel.resource.name);
+    if(sel.service) rows += sumRow(serviceField(), sel.service.name);
+    summaryRows().forEach(function(r){ rows += '<div class="r"><span style="color:var(--muted);text-transform:capitalize">'+r[0]+'</span><b>'+r[1]+'</b></div>'; }); // already escaped
+    if(sel.endDate) rows += sumRow('Nights', String(nights()));
+    detailFields().forEach(function(f){ if(sel.values[f.key]) rows += sumRow(f.label||f.key, sel.values[f.key]); });
+    if(price()) rows += '<div class="r tot"><b>'+(due && due<price() ? 'Deposit due now' : 'Total')+'</b><b>$'+(due||price()).toFixed(2)+'</b></div>';
+    var promoBox = '<div style="display:flex;gap:8px;margin:10px 0 2px">'+
+      '<input id="promo-in" placeholder="Promo code" value="'+esc(sel.promo?sel.promo.code:'')+'" style="flex:1"'+(sel.promo?' disabled':'')+'>'+
+      (sel.promo
+        ? '<button type="button" class="btn back" style="flex:0 0 auto;min-height:44px;padding:0 14px" onclick="clearPromo()">✕ Remove</button>'
+        : '<button type="button" class="btn back" style="flex:0 0 auto;min-height:44px;padding:0 14px" onclick="applyPromo()">Apply</button>')+
+      '</div><div class="paynote" id="promo-msg">'+(sel.promo?'✓ '+esc(sel.promo.off)+' off applied':'')+'</div>';
+    inner = '<h2>'+(bmode()==='none'?'Confirm your order':'Confirm your booking')+'</h2><div class="sum">'+rows+'</div>'+
+      promoBox+
+      (due>0 ? '<div id="pay-el"></div><div class="paynote">🔒 Secure payment — processed by Stripe, paid directly to '+esc(b.name||'the business')+'.</div>' : '')+
+      '<div class="err" id="cf-err"></div>'+
+      btnRow(true, due>0 ? 'Pay $'+due.toFixed(2)+' & Book →' : 'Confirm Booking →', 'doSubmit()');
+  }
+
+  host.innerHTML = '<div class="wrap"><div>'+
+    miniSummary()+
+    '<div class="shell">'+
+    '<div class="top" style="background:linear-gradient(135deg,'+accent()+',#1c2b40)">'+
+      (b.logo&&/^https?:/i.test(b.logo)?'<div class="av" style="background-image:url(\''+esc(b.logo)+'\')"></div>':'<div class="av">'+(b.emoji||'🏪')+'</div>')+
+      '<div><b>'+esc(b.name||'')+'</b><span>'+esc(BLOCK.title)+'</span></div>'+
+      '<a href="'+pageUrl()+'">✕ Cancel</a></div>'+
+    '<div class="steps">'+steps.map(function(_,i){return '<div class="wstep'+(i<=step?' on':'')+'"></div>';}).join('')+'</div>'+
+    '<div class="body">'+inner+'</div></div></div>'+
+    '<div class="side">'+summaryCard()+'</div></div>';
+
+  if(cur==='date') renderCal(_calY, _calM);
+  if(cur==='confirm' && dueNow()>0) mountPayment();
+}
+
+/* ── the thing you're paying for — always in view (Booqable-style) ── */
+function summaryImage(){
+  var b = PAGE.business||{};
+  var img = (sel.resource && sel.resource.url) || (b.hero && /^https?:/i.test(b.hero) ? b.hero : null);
+  return { img: img, emoji: b.emoji || '🏪' };
+}
+function summaryName(){
+  if(sel.resource) return sel.resource.name;
+  if(sel.service) return sel.service.name;
+  return BLOCK.title;
+}
+function summaryRows(){
+  var rows = [];
+  if(sel.resource && sel.service) rows.push([esc(serviceField()||'service'), esc(sel.service.name)]);
+  if(sel.date) rows.push([bmode()==='range'?'Check-in':'Date', esc(sel.date)]);
+  if(sel.endDate) rows.push(['Check-out', esc(sel.endDate)]);
+  if(sel.time) rows.push(['Time', esc(sel.time)]);
+  if(PREFILL && PREFILL.lines) PREFILL.lines.forEach(function(l){
+    rows.push([esc(l.qty>1 ? l.qty+'× '+l.name : l.name), '$'+(l.qty*(parseFloat(l.price)||0)).toFixed(2)]);
+  });
+  (BLOCK.fields||[]).forEach(function(f){
+    if(f.priced && sel.values[f.key]) rows.push([esc(f.label||f.key), esc(sel.values[f.key])]);
+  });
+  // per-person tiers: 2 × Adult
+  var pc = partyCfg();
+  if(pc) pc.tiers.forEach(function(t){
+    var q = sel.party[t.key]||0; if(!q) return;
+    rows.push([q+' × '+esc(t.label), '$'+(q*(t.price||0)).toFixed(2)]);
+  });
+  // picked add-ons
+  (BLOCK.addons||[]).forEach(function(a){
+    if(sel.addons.indexOf(a.id)!==-1) rows.push(['+ '+esc(a.name), '$'+addonPrice(a).toFixed(2)]);
+  });
+  // rate breakdown for stays
+  if(bmode()==='range' && sel.resource && sel.date && sel.endDate){
+    var r = sel.resource.rate_night || sel.resource.rate_full || 0;
+    if(r) rows.push(['$'+r+' × '+nights()+' night'+(nights()>1?'s':''), '$'+(r*nights()).toFixed(2)]);
+  }
+  // promo discount
+  if(sel.promo){
+    var d = discount(basePrice()+addonsTotal());
+    if(d>0) rows.push(['Promo '+esc(sel.promo.code)+' ('+esc(sel.promo.off)+')', '−$'+d.toFixed(2)]);
+  }
+  return rows;
+}
+function summaryCard(){
+  var b = PAGE.business||{};
+  var im = summaryImage();
+  var p = price(), due = dueNow();
+  var rows = summaryRows().map(function(r){ return '<div class="srow"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'; }).join('');
+  return '<div class="scard">'+
+    '<div class="simg" style="'+(im.img
+      ? 'background-image:url(\''+esc(im.img)+'\')'
+      : 'background:linear-gradient(135deg,'+accent()+',#1c2b40)')+'">'+(im.img?'':im.emoji)+'</div>'+
+    '<div class="sbody">'+
+      '<div class="sname">'+esc(summaryName())+'</div>'+
+      '<div class="smeta">'+esc(b.name||'')+(sel.resource&&sel.resource.desc?' · '+esc(sel.resource.desc):'')+'</div>'+
+      '<div style="margin-top:12px">'+(rows||'<div class="srow"><span>Make your picks —</span><b>summary updates live</b></div>')+'</div>'+
+      (p ? '<div class="stot"><span>Total</span><span>$'+p.toFixed(2)+'</span></div>' : '')+
+      (p && due>0 && due<p ? '<div class="sdue"><span>Due now (deposit)</span><span>$'+due.toFixed(2)+'</span></div><div class="sdue"><span>Due at '+(bmode()==='none'?'pickup':'arrival')+'</span><span>$'+(p-due).toFixed(2)+'</span></div>' : '')+
+    '</div>'+
+    '<div class="strust">🔒 Secure checkout · Powered by CyberCheck</div>'+
+  '</div>';
+}
+function miniSummary(){
+  var im = summaryImage();
+  var p = price();
+  var sub = summaryRows().slice(0,2).map(function(r){ return r[1]; }).join(' · ');
+  return '<div class="mini">'+
+    '<div class="mimg" style="'+(im.img
+      ? 'background-image:url(\''+esc(im.img)+'\')'
+      : 'background:linear-gradient(135deg,'+accent()+',#1c2b40)')+'">'+(im.img?'':im.emoji)+'</div>'+
+    '<div style="min-width:0"><b>'+esc(summaryName())+'</b><small>'+(sub||'Summary updates as you pick')+'</small></div>'+
+    (p?'<div class="mtot">$'+p.toFixed(2)+'</div>':'')+
+  '</div>';
+}
+function pageUrl(){
+  return location.pathname.indexOf('/book/')===0 ? '/p/'+P.slug : 'biz.html?b='+P.slug;
+}
+function sumRow(k,v){ return '<div class="r"><span style="color:var(--muted);text-transform:capitalize">'+esc(k)+'</span><b>'+esc(v)+'</b></div>'; }
+function btnRow(back, nextLabel, action){
+  return '<div class="btnrow">'+
+    (back?'<button class="btn back" onclick="go(-1)">← Back</button>':'')+
+    '<button class="btn next" style="background:'+accent()+'" onclick="'+(action||'go(1)')+'">'+esc(nextLabel)+'</button></div>';
+}
+window.go = function(d){
+  var steps = stepList();
+  var cur = steps[step];
+  if(d>0){
+    if(cur==='resource' && !sel.resource) return;
+    if(cur==='service' && !sel.service) return;
+    if(cur==='party' && partyTotal()<1) return;
+    if(cur==='date'){
+      if(!sel.date) return;
+      if(bmode()==='range' && !sel.endDate) return;
+      if(bmode()==='slots' && !sel.time) return;
+    }
+    if(cur==='details'){
+      var missing = detailFields().filter(function(f){ return (f.key==='name'||f.key==='customer'||f.key==='phone'||f.priced) && !sel.values[f.key]; });
+      if(missing.length){ alert('Please fill in: '+missing.map(function(f){return f.label||f.key;}).join(', ')); return; }
+    }
+  }
+  step = Math.max(0, Math.min(steps.length-1, step+d));
+  render();
+};
+window.pickService = function(i){ sel.service = services()[i]; render(); };
+window.partyAdd = function(key, d){
+  var pc = partyCfg(); if(!pc) return;
+  var max = (BLOCK.booking&&BLOCK.booking.maxParty)||99;
+  var next = Math.max(0, (sel.party[key]||0) + d);
+  var others = partyTotal() - (sel.party[key]||0);
+  if(others + next > max) next = max - others;
+  sel.party[key] = next;
+  render();
+};
+window.toggleAddon = function(id){
+  var i = sel.addons.indexOf(id);
+  if(i===-1) sel.addons.push(id); else sel.addons.splice(i,1);
+  render();
+};
+window.pickResource = function(i){
+  sel.resource = BLOCK.resources[i];
+  sel.date=null; sel.endDate=null; sel.time=null; SLOTS=null;
+  loadAvailability().then(function(){ render(); }); // this resource's busy dates grey out
+  render();
+};
+
+/* ── calendar ── */
+var now = new Date(), _calY = now.getFullYear(), _calM = now.getMonth();
+function fmt(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+function renderCal(y,m){
+  _calY=y; _calM=m;
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var first = new Date(y,m,1).getDay(), days = new Date(y,m+1,0).getDate();
+  var today = new Date(); today.setHours(0,0,0,0);
+  var html = '<div class="cal-head"><button onclick="calNav(-1)">‹</button><b>'+months[m]+' '+y+'</b><button onclick="calNav(1)">›</button></div><div class="cal-grid">';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(function(d){ html+='<div class="dl">'+d+'</div>'; });
+  for(var i=0;i<first;i++) html+='<div class="day blank"></div>';
+  for(var d=1;d<=days;d++){
+    var ds = fmt(y,m,d);
+    var dt = new Date(y,m,d); dt.setHours(0,0,0,0);
+    var off = dt<today || AVAIL.blocked.indexOf(ds)!==-1 || AVAIL.full.indexOf(ds)!==-1;
+    var inRange = sel.date && sel.endDate && ds>sel.date && ds<sel.endDate;
+    var cls = 'day'+(off?' off':'')+((sel.date===ds||sel.endDate===ds)?' sel':'')+(inRange?' sel':'');
+    html += '<div class="'+cls+'"'+(off?'':' onclick="pickDate(\''+ds+'\')"')+'>'+d+'</div>';
+  }
+  html += '</div>';
+  document.getElementById('cal').innerHTML = html;
+  renderSlots();
+}
+window.calNav = function(d){ var m=_calM+d, y=_calY; if(m<0){m=11;y--;} if(m>11){m=0;y++;} renderCal(y,m); };
+window.pickDate = function(ds){
+  if(bmode()==='range'){
+    if(!sel.date || sel.endDate || ds < sel.date){ sel.date=ds; sel.endDate=null; }
+    else if(ds >= sel.date){ sel.endDate=ds; }
+  } else {
+    sel.date=ds; sel.time=null; SLOTS=null;
+    if(bmode()==='slots') loadSlots(ds);
+  }
+  render();
+};
+window.pickSlot = function(t){ sel.time=t; render(); };
+window.applyPromo = function(){
+  var code = (document.getElementById('promo-in').value||'').trim();
+  var msg = document.getElementById('promo-msg');
+  if(!code) return;
+  msg.textContent = 'Checking…';
+  fetch(API+'/api/platform/page/'+encodeURIComponent(P.slug)+'/promo/'+encodeURIComponent(code))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.valid){ msg.textContent = d.error || 'That code isn\'t valid.'; return; }
+      sel.promo = d; render();
+    })
+    .catch(function(){ msg.textContent = 'Could not check the code — try again.'; });
+};
+window.clearPromo = function(){ sel.promo=null; render(); };
+function loadSlots(ds){
+  var q = '?app='+encodeURIComponent(P.app)+'&date='+encodeURIComponent(ds)+(sel.resource?'&resource='+encodeURIComponent(sel.resource.id):'');
+  fetch(API+'/api/platform/page/'+encodeURIComponent(P.slug)+'/availability'+q)
+    .then(function(r){return r.json();})
+    .then(function(a){ SLOTS = a.slots||[]; renderSlots(); })
+    .catch(function(){ SLOTS=[]; renderSlots(); });
+}
+function renderSlots(){
+  var host = document.getElementById('slot-host'); if(!host) return;
+  if(bmode()!=='slots' || !sel.date){ host.innerHTML=''; return; }
+  if(SLOTS===null){ host.innerHTML='<div class="star-label">Checking times…</div>'; return; }
+  host.innerHTML = '<label style="margin-top:14px">Pick a time — '+esc(sel.date)+'</label>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+    SLOTS.map(function(sl){
+      var need = partyCfg() ? Math.max(1, partyTotal()) : 1;
+      var off = sl.remaining < need;
+      var on = sel.time===sl.time;
+      var tag = sl.remaining<=0 ? ' · full'
+        : (partyCfg() && sl.remaining<=12) ? ' · '+sl.remaining+' left'
+        : (off ? ' · only '+sl.remaining+' left' : '');
+      return '<button type="button" '+(off?'disabled':'')+' onclick="pickSlot(\''+esc(sl.time)+'\')" style="padding:10px 14px;border-radius:11px;border:1.5px solid '+(on?'var(--accent)':'var(--line)')+';background:'+(on?'var(--accent)':off?'#f0ece5':'#fff')+';color:'+(on?'#fff':off?'#b3aca0':'inherit')+';font-weight:800;font-size:13px;cursor:'+(off?'not-allowed':'pointer')+'">'+esc(sl.time)+tag+'</button>';
+    }).join('')+'</div>';
+}
+
+/* ── payment (Stripe, only when the business configured it) ── */
+var stripeCfg = null;
+function mountPayment(){
+  var due = dueNow();
+  var host = document.getElementById('pay-el');
+  fetch(API+'/api/stripe/config').then(function(r){return r.json();}).then(function(cfg){
+    if(!cfg.publishableKey){ host.innerHTML='<div class="paynote">Payment will be collected by the business directly.</div>'; stripeCfg=null; return; }
+    stripeCfg = cfg;
+    return fetch(API+'/api/stripe/create-payment-intent',{method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ amount: due, site_id: PAGE.site_id, description: (PAGE.business.name||'')+' — '+BLOCK.title })})
+      .then(function(r){return r.json();})
+      .then(function(pi){
+        if(pi.error) throw new Error(pi.error);
+        paymentIntentId = pi.payment_intent_id;
+        return loadStripeJs().then(function(){
+          stripe = Stripe(cfg.publishableKey);
+          elements = stripe.elements({ clientSecret: pi.client_secret });
+          elements.create('payment').mount('#pay-el');
+        });
+      });
+  }).catch(function(e){
+    console.warn('payment unavailable:', e.message);
+    host.innerHTML = '<div class="paynote">Online payment unavailable right now — your booking will be sent as a request and the business will follow up.</div>';
+    stripeCfg = null; paymentIntentId = null;
+  });
+}
+function loadStripeJs(){
+  return new Promise(function(res,rej){
+    if(window.Stripe) return res();
+    var sc=document.createElement('script'); sc.src='https://js.stripe.com/v3/'; sc.onload=res; sc.onerror=rej;
+    document.head.appendChild(sc);
+  });
+}
+
+/* ── submit ── */
+window.doSubmit = function(){
+  var btn = document.querySelector('.btn.next');
+  var errEl = document.getElementById('cf-err');
+  errEl.style.display='none';
+  btn.disabled=true; btn.textContent='Working…';
+
+  var payload = {};
+  Object.keys(sel.values).forEach(function(k){ payload[k]=sel.values[k]; });
+  var ref = new URLSearchParams(location.search).get('ref');
+  if(ref) payload.ref = ref; // referral attribution — validated server-side
+  if(sel.date) payload.date = sel.date;
+  if(sel.endDate) payload.end_date = sel.endDate;
+  if(sel.time) payload.time = sel.time;
+  if(sel.resource) payload.resource_id = sel.resource.id;
+  var pc = partyCfg();
+  if(pc) pc.tiers.forEach(function(t){ if(sel.party[t.key]) payload[t.key] = sel.party[t.key]; });
+  if(sel.addons.length) payload.addons = sel.addons;
+  if(sel.promo) payload.promo = sel.promo.code;
+  var sf = serviceField();
+  if(sf && sel.service) payload[sf] = sel.service.name;
+
+  function sendBooking(){
+    if(paymentIntentId){ payload.payment_intent_id = paymentIntentId; payload.amount_paid = dueNow().toFixed(2); }
+    return fetch(API+'/api/platform/page/'+encodeURIComponent(P.slug)+'/submit/'+encodeURIComponent(P.app),{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){ return r.json().then(function(d){ if(!r.ok||d.error) throw new Error(d.error||'Booking failed'); return d; }); });
+  }
+
+  var flow = Promise.resolve();
+  if(stripe && elements && dueNow()>0){
+    flow = stripe.confirmPayment({ elements: elements, redirect:'if_required' }).then(function(res){
+      if(res.error) throw new Error(res.error.message);
+    });
+  }
+  flow.then(sendBooking).then(function(){
+    try{ sessionStorage.removeItem('cc_prefill:'+P.slug+':'+P.app); }catch(e){}
+    document.getElementById('root').innerHTML = '<div class="shell"><div class="body ok">'+
+      '<div class="big">✅</div><h2>'+(bmode()==='none'?'Order received!':'You\'re booked in!')+'</h2>'+
+      '<p style="color:var(--muted);font-size:14px">'+(paymentIntentId?'Payment received. ':'')+
+      'You\'ll get a text'+(sel.values.phone?' at '+esc(sel.values.phone):'')+' as soon as '+esc(PAGE.business.name||'the business')+' confirms.</p>'+
+      '<a class="btn next" style="background:'+accent()+';display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;margin-top:16px" href="'+pageUrl()+'">← Back to '+esc(PAGE.business.name||'page')+'</a>'+
+      '</div></div>';
+  }).catch(function(e){
+    btn.disabled=false; btn.textContent='Try Again →';
+    errEl.style.display='block'; errEl.textContent = e.message;
+    // availability rejection → bounce back to the date step with fresh data
+    if(/unavailable|fully booked/i.test(e.message)){
+      loadAvailability().then(function(){ sel.date=null; step = stepList().indexOf('date'); render();
+        var e2=document.getElementById('cf-err'); });
+    }
+  });
+};
+
+function loadAvailability(){
+  var q = '?app='+encodeURIComponent(P.app)+(sel.resource?'&resource='+encodeURIComponent(sel.resource.id):'');
+  return fetch(API+'/api/platform/page/'+encodeURIComponent(P.slug)+'/availability'+q)
+    .then(function(r){return r.json();})
+    .then(function(a){ AVAIL = { blocked:a.blocked||[], full:a.full||[] }; })
+    .catch(function(){ AVAIL={blocked:[],full:[]}; });
+}
+
+(function(){
+  if(!P.slug || !P.app){ document.getElementById('root').textContent='Missing booking link.'; return; }
+  try{
+    var _pf = sessionStorage.getItem('cc_prefill:'+P.slug+':'+P.app);
+    if(_pf){ PREFILL = JSON.parse(_pf); Object.keys(PREFILL.values||{}).forEach(function(k){ sel.values[k]=PREFILL.values[k]; }); }
+  }catch(e){ PREFILL=null; }
+  Promise.all([
+    fetch(API+'/api/platform/page/'+encodeURIComponent(P.slug)).then(function(r){ if(!r.ok) throw new Error('Page not found'); return r.json(); }),
+    null
+  ]).then(function(res){
+    PAGE = res[0];
+    BLOCK = (PAGE.blocks||[]).filter(function(b){ return b.id===P.app; })[0];
+    if(!BLOCK){ throw new Error('This booking is not available.'); }
+    document.documentElement.style.setProperty('--accent', accent());
+    return loadAvailability();
+  }).then(render)
+    .catch(function(e){ document.getElementById('root').textContent = e.message; });
+})();
+</script>
+</body>
+</html>

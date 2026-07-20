@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign waiver</title>
+<!--
+  WAIVER SIGNING — /waiver/<slug>?b=<bookingId>&t=<token>.
+  Linked from the confirmation text. The signature record lands in
+  the business's own waivers stream, tied to the booking id, so the
+  departure manifest shows waiver ✓/✗ per guest.
+  Standalone static page — not part of the React app.
+-->
+<style>
+  :root{ --accent:#22c3a6; --text:#1d2329; --muted:#66758a; --soft:#f6f4f0; --line:#e6e0d8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#efece7;color:var(--text);min-height:100vh;padding:18px 12px}
+  .shell{max-width:520px;margin:0 auto;background:#fff;border-radius:26px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(35,28,22,.14)}
+  .top{padding:20px;color:#fff}
+  .top b{font-size:17px;display:block}
+  .top span{font-size:12.5px;opacity:.9}
+  .body{padding:20px}
+  .wtext{background:var(--soft);border-radius:14px;padding:16px;font-size:14px;line-height:1.65;max-height:300px;overflow-y:auto;white-space:pre-wrap}
+  .meta{font-size:12.5px;color:var(--muted);margin:12px 0 2px}
+  label{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin:14px 0 5px}
+  input{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;background:#fbfaf8}
+  #sig{font-family:'Segoe Script','Brush Script MT',cursive;font-size:20px}
+  .agree{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13.5px;line-height:1.5}
+  .agree input{width:auto;margin-top:3px}
+  .btn{width:100%;min-height:52px;border:none;border-radius:14px;font-weight:900;font-size:15px;cursor:pointer;color:#fff;margin-top:16px}
+  .err{background:#fdecec;color:#b03030;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:10px;display:none}
+  .ok{text-align:center;padding:36px 10px}
+  .ok .big{font-size:52px}
+  .center{min-height:70vh;display:grid;place-items:center;color:#8a8074;font-weight:700;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+<div id="root" class="center">Loading waiver…</div>
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var slug = (location.pathname.match(/\/waiver\/([a-z0-9-]+)/i) || [])[1] || new URLSearchParams(location.search).get('s');
+var q = new URLSearchParams(location.search);
+var bid = q.get('b'), tok = q.get('t');
+var D = null;
+function accent(){ return (D&&D.business&&D.business.accent)||'#22c3a6'; }
+
+function render(){
+  var b = D.business||{}, k = D.booking||{};
+  document.title = 'Waiver — '+(b.name||'');
+  var host = document.getElementById('root');
+  host.className='';
+  var inner;
+  if(D.signed){
+    inner = '<div class="ok"><div class="big">✅</div><h2>Already signed</h2>'+
+      '<p style="color:var(--muted);font-size:14px">This booking\'s waiver is on file — you\'re all set'+(k.date?' for '+esc(k.date):'')+'.</p></div>';
+  } else {
+    inner = (k.date?'<div class="meta">For: '+esc([k.title,k.date,k.time].filter(Boolean).join(' · '))+(k.customer?' — '+esc(k.customer):'')+'</div>':'')+
+      '<div class="wtext">'+esc(D.text)+'</div>'+
+      '<label>Sign with your full legal name</label>'+
+      '<input id="sig" placeholder="Type your full name" autocomplete="name">'+
+      '<div class="agree"><input type="checkbox" id="agree"><span>I have read and agree to the terms above. Typing my name is my electronic signature.</span></div>'+
+      '<div class="err" id="w-err"></div>'+
+      '<button class="btn" style="background:'+accent()+'" onclick="sign()">✍️ Sign Waiver</button>';
+  }
+  host.innerHTML = '<div class="shell">'+
+    '<div class="top" style="background:linear-gradient(135deg,'+accent()+',#1c2b40)"><b>'+esc(b.name||'')+'</b><span>Liability waiver</span></div>'+
+    '<div class="body">'+inner+'</div></div>';
+}
+window.sign = function(){
+  var name = (document.getElementById('sig').value||'').trim();
+  var err = document.getElementById('w-err');
+  err.style.display='none';
+  if(!name){ err.style.display='block'; err.textContent='Type your full legal name to sign.'; return; }
+  if(!document.getElementById('agree').checked){ err.style.display='block'; err.textContent='Check the agreement box to sign.'; return; }
+  var btn = document.querySelector('.btn'); btn.disabled=true; btn.textContent='Signing…';
+  fetch(API+'/api/platform/waiver-sign/'+encodeURIComponent(slug),{method:'POST',headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ b: bid, t: tok, name: name })})
+    .then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error(d.error||'Could not sign'); return d; }); })
+    .then(function(){
+      document.querySelector('.body').innerHTML = '<div class="ok"><div class="big">✅</div><h2>Signed!</h2>'+
+        '<p style="color:var(--muted);font-size:14px">Thanks '+esc(name)+' — your waiver is on file. See you soon!</p></div>';
+    })
+    .catch(function(e){ btn.disabled=false; btn.textContent='✍️ Sign Waiver'; err.style.display='block'; err.textContent=e.message; });
+};
+if(!slug || !bid || !tok){ document.getElementById('root').textContent='This link is missing its key — use the link from your confirmation text.'; }
+else fetch(API+'/api/platform/waiver-info/'+encodeURIComponent(slug)+'?b='+encodeURIComponent(bid)+'&t='+encodeURIComponent(tok))
+  .then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error(d.error||'Could not load'); return d; }); })
+  .then(function(d){ D=d; document.documentElement.style.setProperty('--accent', accent()); render(); })
+  .catch(function(e){ document.getElementById('root').textContent = e.message; });
+</script>
+</body>
+</html>

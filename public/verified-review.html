@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leave a review</title>
+<!--
+  CYBERCHECK REVIEWS — verified review form. /r/<slug>?t=<token>.
+  The token is a completed transaction record id: proof the reviewer
+  actually booked. Honest feedback earns points regardless of stars.
+  Standalone static page — URL-only, outside the React app.
+-->
+<style>
+  :root{ --accent:#22c3a6; --text:#1d2329; --muted:#66758a; --soft:#f6f4f0; --line:#e6e0d8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#efece7;color:var(--text);min-height:100vh;padding:18px 12px}
+  .shell{max-width:480px;margin:0 auto;background:#fff;border-radius:26px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(35,28,22,.14)}
+  .top{padding:26px 22px 20px;color:#fff;text-align:center}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+  .top h1{margin:12px 0 2px;font-size:22px;letter-spacing:-.02em}
+  .top p{margin:0;font-size:13px;opacity:.92}
+  .body{padding:20px 22px 26px}
+  .stars{display:flex;justify-content:center;gap:8px;margin:6px 0 4px}
+  .stars button{font-size:38px;background:none;border:none;cursor:pointer;color:#d8d2c8;padding:2px;transition:transform .1s}
+  .stars button.on{color:#f5a623}
+  .stars button:hover{transform:scale(1.15)}
+  .star-label{text-align:center;font-size:13px;color:var(--muted);min-height:18px;margin-bottom:8px}
+  label{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin:14px 0 5px}
+  textarea,input{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;background:#fbfaf8}
+  .submit{width:100%;min-height:50px;border:none;border-radius:14px;color:#fff;font-weight:900;font-size:15px;margin-top:18px;cursor:pointer}
+  .err{background:#fdecec;color:#b03030;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px;display:none}
+  .ok{text-align:center;padding:34px 12px}
+  .ok .big{font-size:52px}
+  .center{min-height:70vh;display:grid;place-items:center;color:#8a8074;font-weight:700;text-align:center;padding:0 20px}
+  .honest{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5}
+  .foot{text-align:center;color:#9a8f83;font-size:11.5px;padding:0 18px 20px}
+</style>
+</head>
+<body>
+<div id="root" class="center">Loading…</div>
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var token = new URLSearchParams(location.search).get('t');
+var slug = (location.pathname.match(/\/r\/([a-z0-9-]+)/i) || [])[1];
+var rating = 0;
+var LABELS = ['', 'Not good', 'Could be better', 'It was okay', 'Really good', 'Loved it!'];
+
+if(!token){ document.getElementById('root').textContent = 'This review link is missing its token.'; }
+else fetch(API+'/api/platform/review-token/'+encodeURIComponent(token))
+  .then(function(r){ return r.json().then(function(d){ if(!r.ok||!d.valid) throw new Error(d.error||'This review link is not valid.'); return d; }); })
+  .then(function(d){
+    document.title = 'Review '+d.business.name;
+    document.documentElement.style.setProperty('--accent', d.business.accent||'#22c3a6');
+    var root = document.getElementById('root');
+    root.className='';
+    root.innerHTML =
+      '<div class="shell">'+
+        '<div class="top" style="background:linear-gradient(160deg,'+esc(d.business.accent||'#22c3a6')+',#1c2b40)">'+
+          '<span class="badge">🛡️ '+esc(d.badge)+'</span>'+
+          '<h1>How was it'+(d.reviewer?', '+esc(d.reviewer):'')+'?</h1>'+
+          '<p>'+esc(d.title)+(d.date?' · '+esc(d.date):'')+' at '+esc(d.business.name)+'</p></div>'+
+        '<div class="body">'+
+          '<div class="stars" id="stars">'+[1,2,3,4,5].map(function(n){return '<button onclick="setStars('+n+')" id="st-'+n+'">★</button>';}).join('')+'</div>'+
+          '<div class="star-label" id="star-label">Tap a star</div>'+
+          '<label>Tell others about it (optional)</label>'+
+          '<textarea id="rv-text" rows="4" placeholder="What stood out? Good or bad — honest helps everyone."></textarea>'+
+          '<label>Your name (shown with the review)</label>'+
+          '<input id="rv-name" value="'+esc(d.reviewer)+'" maxlength="60">'+
+          '<div class="err" id="rv-err"></div>'+
+          '<button class="submit" style="background:'+esc(d.business.accent||'#22c3a6')+'" onclick="send()">Post Verified Review</button>'+
+          '<div class="honest">Honest feedback earns the same points as glowing feedback.<br>This review is tied to a real completed booking.</div>'+
+        '</div>'+
+        '<div class="foot">CyberCheck Reviews — verified feedback from real customers</div>'+
+      '</div>';
+  })
+  .catch(function(e){ document.getElementById('root').textContent = e.message; });
+
+window.setStars = function(n){
+  rating = n;
+  for(var i=1;i<=5;i++) document.getElementById('st-'+i).className = i<=n ? 'on' : '';
+  document.getElementById('star-label').textContent = LABELS[n];
+};
+window.send = function(){
+  var err = document.getElementById('rv-err');
+  err.style.display='none';
+  if(!rating){ err.style.display='block'; err.textContent='Pick a star rating first.'; return; }
+  var btn = document.querySelector('.submit');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  fetch(API+'/api/platform/reviews', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ token: token, stars: rating, text: document.getElementById('rv-text').value, name: document.getElementById('rv-name').value })
+  }).then(function(r){ return r.json().then(function(d){ if(!r.ok||d.error) throw new Error(d.error||'Could not post'); return d; }); })
+    .then(function(d){
+      document.getElementById('root').innerHTML =
+        '<div class="shell"><div class="body ok">'+
+        '<div class="big">🛡️</div><h2 style="margin:8px 0 6px">Verified review posted</h2>'+
+        '<p style="color:var(--muted);font-size:14px">Thanks for the honest feedback!'+(d.points?' <b>+'+d.points+' points</b> added to your Gulf Perks wallet. 🎁':'')+'</p>'+
+        (slug?'<a class="submit" style="background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;margin-top:16px" href="/reviews/'+encodeURIComponent(slug)+'">See all reviews →</a>':'')+
+        '</div></div>';
+    })
+    .catch(function(e){ btn.disabled=false; btn.textContent='Post Verified Review'; err.style.display='block'; err.textContent=e.message; });
+};
+</script>
+</body>
+</html>

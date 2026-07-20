@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gulf Coast Radar</title>
+<style>
+  body { margin: 0; background: #0f172a; color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #38bdf8; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="spinner"></div>
+<script>
+(async function() {
+  const API = 'https://gcr-api-clean.vercel.app';
+  const code = new URLSearchParams(window.location.search).get('c');
+
+  if (!code) {
+    window.location.href = 'https://gulfcoastradar.com';
+    return;
+  }
+
+  try {
+    const res = await fetch(API + '/api/qr/scan/' + code, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_agent: navigator.userAgent,
+        device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+      })
+    });
+
+    const data = res.ok ? await res.json() : null;
+    const dest = data && data.destination_url ? data.destination_url : 'https://gulfcoastradar.com';
+    window.location.href = dest;
+  } catch (e) {
+    window.location.href = 'https://gulfcoastradar.com';
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading…</title>
+<!--
+  PUBLIC SMART PAGE — one URL per business (/p/<slug>, rewritten to
+  this file; also works as biz.html?b=<slug>).
+  Rendered entirely from the business's installed blocks via
+  GET /api/platform/page/:slug. Tap a block → popup opens —
+  the customer never leaves the page.
+  Nothing here is specific to any business, tool, or industry.
+-->
+<style>
+  :root{ --accent:#22c3a6; --text:#1d2329; --muted:#66758a; --soft:#f6f4f0; --line:#e6e0d8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#efece7;color:var(--text);min-height:100vh;padding:18px 12px}
+  .shell{max-width:560px;margin:0 auto;background:#f9f7f4;border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(35,28,22,.14)}
+  .hero{padding:30px 22px 22px;color:#fff;position:relative}
+  .avatar{width:78px;height:78px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:34px;border:3px solid rgba(255,255,255,.72);box-shadow:0 8px 22px rgba(0,0,0,.25);background-size:cover;background-position:center}
+  .hero h1{margin:12px 0 4px;font-size:30px;line-height:1;letter-spacing:-.04em}
+  .hero p{margin:0;font-size:14px;opacity:.94}
+  .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 18px 6px}
+  .cta{min-height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:14px;color:#fff;border:none;cursor:pointer;text-decoration:none}
+  .cta.call{background:linear-gradient(135deg,#26c576,#17995d)}
+  .links{padding:12px 18px 26px;display:flex;flex-direction:column;gap:11px}
+  .lk{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px 14px;cursor:pointer;text-align:left;width:100%;font:inherit;transition:transform .15s}
+  .lk:hover{transform:translateY(-2px)}
+  .lk .i{width:46px;height:46px;border-radius:13px;background:var(--soft);display:grid;place-items:center;font-size:21px;flex-shrink:0}
+  .lk b{font-size:15px;display:block}
+  .lk span{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+  .lk .ar{margin-left:auto;color:#a0a8b5;font-size:19px}
+  .thumbs{display:flex;gap:7px;margin-top:-3px}
+  .thumbs div{flex:1;height:64px;border-radius:10px;background-size:cover;background-position:center}
+  .foot{text-align:center;color:#9a8f83;font-size:11.5px;padding:0 18px 22px}
+  .foot a{color:inherit}
+
+  /* ── universal content sections — each is its own installable app ── */
+  .sec{padding:26px 20px;border-top:1px solid var(--line)}
+  .sec h2{margin:0 0 4px;font-size:20px;letter-spacing:-.02em}
+  .sec .lead{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .sec-hero{padding:0;border:none;color:#fff;position:relative;min-height:340px;display:flex;flex-direction:column;justify-content:flex-end}
+  .sec-hero .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+  .sec-hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,20,.15),rgba(8,12,20,.72))}
+  .sec-hero .in{position:relative;padding:26px 22px 28px}
+  .sec-hero h1{margin:0 0 8px;font-size:32px;line-height:1.05;letter-spacing:-.04em}
+  .sec-hero p{margin:0 0 16px;font-size:15px;opacity:.95;max-width:34ch}
+  .sec-btn{display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:0 26px;border-radius:14px;color:#fff;font-weight:900;font-size:15px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.18)}
+  .about-grid{display:flex;gap:16px;align-items:center}
+  .about-grid.rev{flex-direction:row-reverse}
+  .about-grid .ph{width:44%;flex-shrink:0;aspect-ratio:1;border-radius:16px;background-size:cover;background-position:center}
+  .about-grid p{margin:0;font-size:14px;line-height:1.6;color:#40484f}
+  @media(max-width:460px){ .about-grid,.about-grid.rev{flex-direction:column} .about-grid .ph{width:100%} }
+  .steps-list{display:flex;flex-direction:column;gap:14px}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .step .n{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:900;flex-shrink:0;font-size:15px}
+  .step b{font-size:15px;display:block}
+  .step span{font-size:13px;color:var(--muted)}
+  .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .feat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px}
+  .feat .ic{font-size:24px}
+  .feat b{display:block;font-size:14px;margin-top:6px}
+  .feat span{font-size:12.5px;color:var(--muted)}
+  .chk{display:flex;align-items:center;gap:11px;padding:9px 0;font-size:14.5px;border-bottom:1px solid #f0ebe4}
+  .chk:last-child{border-bottom:none}
+  .chk .mk{font-size:16px}
+  .chk.no{color:#a79f95}
+  .hl{margin:18px 20px;background:linear-gradient(135deg,var(--accent),#1c2b40);color:#fff;border-radius:20px;padding:22px}
+  .hl h2{margin:0 0 6px;font-size:19px}
+  .hl p{margin:0;font-size:14px;opacity:.95}
+  .hl .price{font-size:26px;font-weight:900;margin:10px 0}
+  .cta-sec{margin:18px 20px;background:var(--soft);border:1.5px dashed var(--accent);border-radius:20px;padding:24px;text-align:center}
+  .cta-sec h2{margin:0 0 6px;font-size:21px}
+  .cta-sec p{margin:0 0 16px;color:var(--muted);font-size:14px}
+  .contact-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f0ebe4;font-size:14.5px;text-decoration:none;color:var(--text)}
+  .contact-row:last-child{border-bottom:none}
+  .contact-row .ic{width:38px;height:38px;border-radius:11px;background:var(--soft);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+
+  /* popup */
+  .pop{position:fixed;inset:0;background:rgba(15,12,8,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;backdrop-filter:blur(3px)}
+  .pop.open{display:flex}
+  .pop-box{background:#fff;width:100%;max-width:560px;max-height:86vh;overflow-y:auto;border-radius:24px 24px 0 0;padding:20px}
+  @media(min-width:600px){ .pop{align-items:center;padding:20px} .pop-box{border-radius:24px} }
+  .pop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .pop-head h2{margin:0;font-size:19px}
+  .pop-x{background:var(--soft);border:none;border-radius:50%;width:34px;height:34px;font-size:15px;cursor:pointer}
+  .item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f0ebe4;font-size:14px}
+  .item:last-child{border-bottom:none}
+  .item b{font-weight:700}
+  .item .pr{font-weight:800;white-space:nowrap}
+  .item small{display:block;color:var(--muted);margin-top:2px;font-weight:400}
+  label{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin:12px 0 5px}
+  input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;background:#fbfaf8}
+  .submit{width:100%;min-height:50px;border:none;border-radius:14px;color:#fff;font-weight:900;font-size:15px;margin-top:16px;cursor:pointer}
+  .ok{text-align:center;padding:30px 10px}
+  .ok .big{font-size:46px}
+  .err{background:#fdecec;color:#b03030;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:10px;display:none}
+  .center{min-height:70vh;display:grid;place-items:center;color:#8a8074;font-weight:700}
+</style>
+</head>
+<body>
+<div id="root" class="center">Loading…</div>
+
+<div class="pop" id="pop" onclick="if(event.target===this)closePop()">
+  <div class="pop-box">
+    <div class="pop-head"><h2 id="pop-title"></h2><button class="pop-x" onclick="closePop()">✕</button></div>
+    <div id="pop-body"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+var API = window.CC_API_BASE || 'https://gcr-api-clean.vercel.app';
+var PAGE = null;
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function slugFromUrl(){
+  var m = location.pathname.match(/\/p\/([a-z0-9-]+)/i);
+  if(m) return m[1];
+  return new URLSearchParams(location.search).get('b');
+}
+function accent(){ return (PAGE && PAGE.business && PAGE.business.accent) || '#22c3a6'; }
+
+function render(){
+  var b = PAGE.business || {};
+  if(!(PAGE.seo && PAGE.seo.title)) document.title = b.name || 'Business Page';  // SEO app owns the title when present
+  var heroStyle = b.hero && /^https?:/i.test(b.hero)
+    ? 'background:linear-gradient(180deg,rgba(8,12,20,.28),rgba(8,12,20,.7)),url(\''+esc(b.hero)+'\') center/cover'
+    : 'background:linear-gradient(160deg,'+accent()+',#1c2b40)';
+  var avatar = b.logo && /^https?:/i.test(b.logo)
+    ? '<div class="avatar" style="background-image:url(\''+esc(b.logo)+'\')"></div>'
+    : '<div class="avatar">'+(b.emoji||'🏪')+'</div>';
+
+  var blocks = PAGE.blocks||[];
+  // a Hero section app, if installed, becomes the page's top banner
+  var heroIdx = blocks.findIndex(function(bl){ return bl.section && bl.section.layout==='hero'; });
+
+  // walk blocks in page order: content sections render inline, everything
+  // else (booking, menu, links…) stays a tap row grouped in a links card
+  var parts = [], rowBuf = [];
+  function flush(){ if(rowBuf.length){ parts.push('<div class="links">'+rowBuf.join('')+'</div>'); rowBuf=[]; } }
+  blocks.forEach(function(bl, i){
+    if(i===heroIdx) return;                 // rendered at the very top
+    if(bl.section){ flush(); parts.push(renderSection(bl)); }
+    else rowBuf.push(renderRow(bl, i));
+  });
+  flush();
+
+  var top;
+  if(heroIdx>=0){
+    top = renderSection(blocks[heroIdx]);   // full custom hero banner
+  } else {
+    var primary = blocks.filter(function(bl){ return !bl.section; })[0];
+    var pi = blocks.indexOf(primary);
+    top = '<div class="hero" style="'+heroStyle+'">'+avatar+
+      '<h1>'+esc(b.name||'')+'</h1><p>'+esc(b.tagline||'')+'</p></div>'+
+      '<div class="cta-row">'+
+        (b.phone ? '<a class="cta call" href="tel:'+esc(b.phone)+'">📞 Call Now</a>' : '')+
+        (primary ? '<button class="cta" style="background:'+accent()+'" onclick="openBlock('+pi+')">'+esc(primary.title)+'</button>' : '')+
+      '</div>';
+  }
+
+  document.getElementById('root').className = '';
+  document.getElementById('root').innerHTML =
+    '<div class="shell">'+ top +
+      (parts.length ? parts.join('') : '<div style="text-align:center;color:#9a8f83;padding:16px">Nothing here yet.</div>')+
+      '<div class="foot">Powered by <b>CyberCheck</b> — one QR code, your whole business.</div>'+
+    '</div>';
+}
+
+/* a single tap row (booking, menu, links, forms) */
+function renderRow(bl, i){
+  var thumbs = '';
+  var recs = (PAGE.data && PAGE.data[bl.dataKey]) || [];
+  var imgs = recs.filter(function(r){ return r.url && /^https?:/i.test(r.url); }).slice(0,3);
+  if(imgs.length) thumbs = '<div class="thumbs">'+imgs.map(function(r){
+    return '<div style="background-image:url(\''+esc(r.url)+'\')"></div>'; }).join('')+'</div>';
+  var fromP = fromPrice(bl);
+  return '<button class="lk" onclick="openBlock('+i+')">'+
+    '<div class="i">'+esc(bl.icon)+'</div>'+
+    '<div><b>'+esc(bl.title)+'</b><span>'+esc(bl.sub)+'</span></div>'+
+    (fromP?'<span style="margin-left:auto;font-size:12px;font-weight:900;color:'+accent()+';white-space:nowrap">from $'+fromP+'</span><span class="ar" style="margin-left:8px">›</span>':'<span class="ar">›</span>')+
+    '</button>'+thumbs;
+}
+
+/* ── inline content sections — one renderer per universal layout.
+   Singletons read bl.content (the business's install config);
+   repeatables read their records from PAGE.data[bl.dataKey]. ── */
+function secBtn(label, target){
+  if(!label) return '';
+  return '<a class="sec-btn" style="background:'+accent()+'" onclick="goTarget(\''+esc(target||'').replace(/'/g,"\\'")+'\');return false;" href="#">'+esc(label)+'</a>';
+}
+function recs(bl){ return (PAGE.data && PAGE.data[bl.dataKey]) || []; }
+function renderSection(bl){
+  var c = bl.content || {}, L = bl.section.layout, b = PAGE.business||{};
+  if(L==='hero'){
+    var img = c.image && /^https?:/i.test(c.image) ? c.image : (b.hero||'');
+    return '<div class="sec-hero">'+
+      (img?'<div class="bg" style="background-image:url(\''+esc(img)+'\')"></div><div class="shade"></div>':'<div class="bg" style="background:linear-gradient(160deg,'+accent()+',#1c2b40)"></div>')+
+      '<div class="in"><h1>'+esc(c.headline||b.name||'')+'</h1>'+
+      (c.subhead?'<p>'+esc(c.subhead)+'</p>':'')+
+      secBtn(c.button_label, c.button_target)+'</div></div>';
+  }
+  if(L==='about'){
+    var im = c.image && /^https?:/i.test(c.image);
+    return '<div class="sec"><div class="about-grid'+(c.align==='Image left'?'':' rev')+'">'+
+      (im?'<div class="ph" style="background-image:url(\''+esc(c.image)+'\')"></div>':'')+
+      '<div><h2>'+esc(c.heading||'About Us')+'</h2><p>'+esc(c.body||'').replace(/\n/g,'<br>')+'</p></div>'+
+      '</div></div>';
+  }
+  if(L==='steps'){
+    var s = recs(bl);
+    if(!s.length) return '';
+    return '<div class="sec"><h2>'+esc(c.heading||'How It Works')+'</h2><div class="steps-list">'+
+      s.map(function(r,idx){ return '<div class="step"><div class="n">'+(r.icon||'')+(r.icon?'':(idx+1))+'</div>'+
+        '<div><b>'+esc(r.title||'')+'</b><span>'+esc(r.desc||'')+'</span></div></div>'; }).join('')+
+      '</div></div>';
+  }
+  if(L==='features'){
+    var f = recs(bl);
+    if(!f.length) return '';
+    return '<div class="sec"><h2>'+esc(c.heading||'Why Choose Us')+'</h2><div class="feat-grid">'+
+      f.map(function(r){ return '<div class="feat"><div class="ic">'+esc(r.icon||'⭐')+'</div><b>'+esc(r.title||'')+'</b><span>'+esc(r.desc||'')+'</span></div>'; }).join('')+
+      '</div></div>';
+  }
+  if(L==='checklist'){
+    var items = recs(bl);
+    if(!items.length) return '';
+    return '<div class="sec"><h2>'+esc(c.heading||'What\'s Included')+'</h2>'+
+      items.map(function(r){ var no = r.included==='Not included';
+        return '<div class="chk'+(no?' no':'')+'"><span class="mk">'+(no?'✕':'✅')+'</span>'+esc(r.text||'')+'</div>'; }).join('')+
+      '</div>';
+  }
+  if(L==='highlight'){
+    return '<div class="hl"><h2>'+esc(c.heading||'')+'</h2>'+
+      (c.price?'<div class="price">'+esc(c.price)+'</div>':'')+
+      (c.body?'<p>'+esc(c.body)+'</p>':'')+
+      (c.button_label?'<div style="margin-top:14px">'+secBtn(c.button_label,c.button_target)+'</div>':'')+
+      '</div>';
+  }
+  if(L==='cta'){
+    return '<div class="cta-sec"><h2>'+esc(c.headline||'Ready when you are')+'</h2>'+
+      (c.subhead?'<p>'+esc(c.subhead)+'</p>':'')+
+      secBtn(c.button_label||'Book Now', c.button_target)+'</div>';
+  }
+  if(L==='contact'){
+    var rows='';
+    if(c.phone) rows+='<a class="contact-row" href="tel:'+esc(c.phone)+'"><span class="ic">📞</span>'+esc(c.phone)+'</a>';
+    if(c.email) rows+='<a class="contact-row" href="mailto:'+esc(c.email)+'"><span class="ic">✉️</span>'+esc(c.email)+'</a>';
+    if(c.address) rows+='<a class="contact-row" target="_blank" href="https://maps.google.com/?q='+encodeURIComponent(c.address)+'"><span class="ic">📍</span>'+esc(c.address)+'</a>';
+    if(c.hours) rows+='<div class="contact-row"><span class="ic">🕐</span>'+esc(c.hours).replace(/\n/g,'<br>')+'</div>';
+    return '<div class="sec"><h2>'+esc(c.heading||'Get in Touch')+'</h2>'+rows+'</div>';
+  }
+  if(L==='richtext'){
+    if(!c.heading && !c.body) return '';
+    return '<div class="sec">'+(c.heading?'<h2>'+esc(c.heading)+'</h2>':'')+
+      (c.body?'<p style="font-size:14px;line-height:1.65;color:#40484f;margin:0">'+esc(c.body).replace(/\n/g,'<br>')+'</p>':'')+'</div>';
+  }
+  if(L==='footer'){
+    return '<div class="sec" style="text-align:center;color:var(--muted)">'+
+      (c.tagline?'<div style="font-weight:700;color:var(--text);margin-bottom:6px">'+esc(c.tagline)+'</div>':'')+
+      (c.policies?'<div style="font-size:12.5px;line-height:1.6">'+esc(c.policies).replace(/\n/g,'<br>')+'</div>':'')+'</div>';
+  }
+  return '';
+}
+/* section button target → a checkout, another block's popup, or a URL */
+window.goTarget = function(target){
+  if(!target) return;
+  if(/^https?:\/\//i.test(target)){ window.open(target,'_blank'); return; }
+  if(/^(tel:|mailto:)/i.test(target)){ location.href = target; return; }
+  var idx = (PAGE.blocks||[]).findIndex(function(bl){ return bl.id===target; });
+  if(idx>=0){ openBlock(idx); return; }
+  // fallback: first checkout block, else first non-section block
+  var cb = (PAGE.blocks||[]).find(function(bl){ return bl.checkout; }) || (PAGE.blocks||[]).find(function(bl){ return !bl.section; });
+  if(cb) openBlock((PAGE.blocks||[]).indexOf(cb));
+};
+
+function openBlock(i){
+  var bl = PAGE.blocks[i];
+  if(!bl || bl.section) return;   // content sections render inline, not as popups
+  document.getElementById('pop-title').textContent = bl.title;
+  var body = document.getElementById('pop-body');
+
+  // 0a. Cart block → pick items here, then hand off to the universal checkout
+  if(bl.cart){
+    openCart(i); return;
+  }
+
+  // 0b. Booking block → the universal standalone checkout page
+  if(bl.checkout){
+    if(bl.url){ window.open(bl.url, '_blank'); return; } // business uses an external booking link
+    location.href = checkoutUrl(bl.id);
+    return;
+  }
+
+  // 1. Link block → just go
+  if(bl.url && !bl.dataKey){ window.open(bl.url, '_blank'); return; }
+
+  // 2. Public data block → list the records right here (menu, specials, events…)
+  var recs = (PAGE.data && PAGE.data[bl.dataKey]) || [];
+  if(bl.publicData){
+    body.innerHTML = recs.length ? recs.map(function(r){
+      var name = r.name || r.title || r.q || '';
+      var detail = r.desc || r.detail || r.a || [r.date, r.time, r.days, r.duration].filter(Boolean).join(' · ');
+      var price = r.price != null && r.price !== '' ? '$'+r.price : '';
+      var img = r.url && /^https?:/i.test(r.url) ? '<div style="height:130px;border-radius:12px;background:url(\''+esc(r.url)+'\') center/cover;margin-bottom:6px"></div>' : '';
+      return img + '<div class="item"><div><b>'+esc(name)+'</b>'+(detail?'<small>'+esc(detail)+'</small>':'')+'</div>'+(price?'<span class="pr">'+esc(price)+'</span>':'')+'</div>';
+    }).join('') : '<div class="ok">Nothing posted yet — check back soon!</div>';
+    openPop(); return;
+  }
+
+  // 3. Form block → capture a submission (booking, request, lead…)
+  if(bl.dataKey && bl.fields && bl.fields.length){
+    body.innerHTML = bl.fields.map(function(f){
+      var id = 'pf-'+f.key;
+      if(f.type==='select' && f.options) return '<label>'+esc(f.label||f.key)+'</label><select id="'+id+'">'+f.options.map(function(o){return '<option>'+esc(o)+'</option>';}).join('')+'</select>';
+      if(f.type==='textarea') return '<label>'+esc(f.label||f.key)+'</label><textarea id="'+id+'" rows="3"></textarea>';
+      var t = f.type==='number'?'number':f.type==='date'?'date':f.key==='phone'?'tel':'text';
+      return '<label>'+esc(f.label||f.key)+'</label><input id="'+id+'" type="'+t+'">';
+    }).join('')+
+    '<div class="err" id="pf-err"></div>'+
+    '<button class="submit" style="background:'+accent()+'" onclick="submitBlock('+i+')">Send →</button>';
+    openPop(); return;
+  }
+
+  // 4. Info-only block
+  body.innerHTML = '<div class="ok"><div class="big">'+esc(bl.icon)+'</div><p>'+esc(bl.sub||bl.title)+'</p>'+(bl.url?'<a class="submit" style="background:'+accent()+';display:flex;align-items:center;justify-content:center;text-decoration:none" href="'+esc(bl.url)+'" target="_blank">Open →</a>':'')+'</div>';
+  openPop();
+}
+
+function submitBlock(i){
+  var bl = PAGE.blocks[i];
+  var payload = {};
+  bl.fields.forEach(function(f){
+    var el = document.getElementById('pf-'+f.key);
+    if(el && el.value) payload[f.key] = el.value;
+  });
+  var btn = document.querySelector('#pop-body .submit');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  fetch(API+'/api/platform/page/'+encodeURIComponent(slugFromUrl())+'/submit/'+encodeURIComponent(bl.id), {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.error) throw new Error(d.error);
+    document.getElementById('pop-body').innerHTML =
+      '<div class="ok"><div class="big">✅</div><h3 style="margin:8px 0 6px">Sent!</h3>'+
+      '<p style="color:#66758a;font-size:14px">You\'ll hear back shortly'+(payload.phone?' by text':'')+'. Thanks!</p></div>';
+  }).catch(function(e){
+    btn.textContent = 'Send →'; btn.disabled = false;
+    var er = document.getElementById('pf-err');
+    er.style.display = 'block'; er.textContent = e.message || 'Something went wrong — try again.';
+  });
+}
+
+/* lowest visible price for a checkout block — shoppers see cost before they tap */
+function fromPrice(bl){
+  if(!bl.checkout) return null;
+  var prices = [];
+  (bl.resources||[]).forEach(function(r){ [r.rate_hourly, r.rate_full, r.rate_night].forEach(function(x){ if(x>0) prices.push(x); }); });
+  ((PAGE.data&&PAGE.data.services)||[]).forEach(function(s){ var p=parseFloat(s.price); if(p>0) prices.push(p); });
+  (bl.fields||[]).forEach(function(f){
+    if(f.priced && f.options) f.options.forEach(function(o){ var m=String(o).match(/\$?\s*(\d+(?:\.\d{1,2})?)/); if(m) prices.push(parseFloat(m[1])); });
+  });
+  if(!prices.length) return null;
+  var min = Math.min.apply(null, prices);
+  return min % 1 === 0 ? String(min) : min.toFixed(2);
+}
+
+function checkoutUrl(appId){
+  var slug = slugFromUrl();
+  var ref = new URLSearchParams(location.search).get('ref');
+  var pretty = location.pathname.indexOf('/p/')===0;
+  var refQ = ref ? (pretty ? '?ref=' : '&ref=')+encodeURIComponent(ref) : '';
+  return (pretty
+    ? '/book/'+encodeURIComponent(slug)+'/'+encodeURIComponent(appId)
+    : 'book.html?b='+encodeURIComponent(slug)+'&app='+encodeURIComponent(appId)) + refQ;
+}
+
+/* ── universal cart: any block whose manifest declares cart:{source,into,totalInto}
+      lets guests pick quantities from that data stream, then checks out
+      through the same universal checkout page as every other app ── */
+var CART = {}; // record index -> qty
+function cartItems(bl){ return ((PAGE.data && PAGE.data[bl.cart.source]) || []).filter(function(r){ return r.name && r.price != null && r.price !== ''; }); }
+function cartTotal(bl){
+  var t = 0;
+  cartItems(bl).forEach(function(r, idx){ t += (CART[idx]||0) * (parseFloat(r.price)||0); });
+  return t;
+}
+function openCart(i){
+  CART = {};
+  document.getElementById('pop-title').textContent = PAGE.blocks[i].title;
+  renderCart(i); openPop();
+}
+window.cartAdd = function(i, idx, d){
+  CART[idx] = Math.max(0, (CART[idx]||0) + d);
+  renderCart(i);
+};
+function renderCart(i){
+  var bl = PAGE.blocks[i];
+  var items = cartItems(bl);
+  var bySection = {};
+  items.forEach(function(r, idx){
+    var s = r.section || '';
+    (bySection[s] = bySection[s] || []).push({ r:r, idx:idx });
+  });
+  var html = Object.keys(bySection).map(function(s){
+    return (s?'<label>'+esc(s)+'</label>':'') + bySection[s].map(function(e){
+      var q = CART[e.idx]||0;
+      return '<div class="item"><div style="flex:1"><b>'+esc(e.r.name)+'</b>'+(e.r.desc?'<small>'+esc(e.r.desc)+'</small>':'')+'</div>'+
+        '<span class="pr">$'+esc(e.r.price)+'</span>'+
+        '<span style="display:flex;align-items:center;gap:8px;white-space:nowrap">'+
+          '<button type="button" onclick="cartAdd('+i+','+e.idx+',-1)" style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:900;cursor:pointer'+(q?'':';opacity:.35')+'">−</button>'+
+          '<b style="min-width:14px;text-align:center">'+q+'</b>'+
+          '<button type="button" onclick="cartAdd('+i+','+e.idx+',1)" style="width:30px;height:30px;border-radius:9px;border:none;background:'+accent()+';color:#fff;font-weight:900;cursor:pointer">+</button>'+
+        '</span></div>';
+    }).join('');
+  }).join('');
+  var total = cartTotal(bl);
+  var n = Object.keys(CART).reduce(function(a,k){ return a + CART[k]; }, 0);
+  document.getElementById('pop-body').innerHTML =
+    (items.length ? html : '<div class="ok">Nothing on the menu yet — check back soon!</div>')+
+    (items.length ? '<button class="submit" style="background:'+accent()+(n?'':';opacity:.5')+'" '+(n?'':'disabled')+' onclick="cartCheckout('+i+')">'+
+      (n ? 'Checkout — '+n+' item'+(n>1?'s':'')+' · $'+total.toFixed(2)+' →' : 'Add items to order')+'</button>' : '');
+}
+window.cartCheckout = function(i){
+  var bl = PAGE.blocks[i];
+  var items = cartItems(bl);
+  var lines = [], text = [];
+  items.forEach(function(r, idx){
+    var q = CART[idx]||0; if(!q) return;
+    lines.push({ name:r.name, price:parseFloat(r.price)||0, qty:q });
+    text.push(q+'x '+r.name+' ($'+r.price+')');
+  });
+  if(!lines.length) return;
+  var values = {};
+  values[bl.cart.into||'items'] = text.join('\n');
+  if(bl.cart.totalInto) values[bl.cart.totalInto] = cartTotal(bl).toFixed(2);
+  try{ sessionStorage.setItem('cc_prefill:'+slugFromUrl()+':'+bl.id, JSON.stringify({ values:values, price:cartTotal(bl), lines:lines })); }catch(e){}
+  location.href = checkoutUrl(bl.id);
+};
+
+function openPop(){ document.getElementById('pop').classList.add('open'); }
+function closePop(){ document.getElementById('pop').classList.remove('open'); }
+
+(function(){
+  var slug = slugFromUrl();
+  if(!slug){ document.getElementById('root').textContent = 'No page specified.'; return; }
+  fetch(API+'/api/platform/page/'+encodeURIComponent(slug))
+    .then(function(r){ if(!r.ok) throw new Error(r.status===404?'Page not found':'Could not load page'); return r.json(); })
+    .then(function(d){ PAGE = d; applySeo(); render(); })
+    .catch(function(e){ document.getElementById('root').textContent = e.message; });
+})();
+
+/* ── SEO: meta tags + JSON-LD structured data, built from the SEO app's
+   config + the business + live data. Universal — the schema type is
+   chosen by the business (cleaning service, salon, restaurant, …). ── */
+function applySeo(){
+  var b = PAGE.business||{}, s = PAGE.seo||{}, data = PAGE.data||{};
+  var pageUrl = location.origin + '/p/' + encodeURIComponent(slugFromUrl());
+  var title = s.title || (b.name ? b.name + (b.tagline ? ' — ' + b.tagline : '') : 'Book online');
+  var desc = s.description || b.tagline || ('Book ' + (b.name||'us') + ' online.');
+  var img = (s.og_image && /^https?:/i.test(s.og_image)) ? s.og_image
+    : (b.hero && /^https?:/i.test(b.hero)) ? b.hero
+    : (b.logo && /^https?:/i.test(b.logo)) ? b.logo : '';
+
+  document.title = title;
+  function meta(sel, attr, key, val){
+    if(val==null||val==='') return;
+    var el = document.head.querySelector(sel);
+    if(!el){ el=document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+    el.setAttribute('content', val);
+  }
+  meta('meta[name="description"]','name','description', desc);
+  if(s.keywords) meta('meta[name="keywords"]','name','keywords', s.keywords);
+  // Open Graph + Twitter (link previews on iMessage, FB, X, etc.)
+  meta('meta[property="og:title"]','property','og:title', title);
+  meta('meta[property="og:description"]','property','og:description', desc);
+  meta('meta[property="og:type"]','property','og:type', 'website');
+  meta('meta[property="og:url"]','property','og:url', pageUrl);
+  if(img) meta('meta[property="og:image"]','property','og:image', img);
+  meta('meta[name="twitter:card"]','name','twitter:card', img ? 'summary_large_image' : 'summary');
+  meta('meta[name="twitter:title"]','name','twitter:title', title);
+  meta('meta[name="twitter:description"]','name','twitter:description', desc);
+  if(img) meta('meta[name="twitter:image"]','name','twitter:image', img);
+  // canonical
+  var can = document.head.querySelector('link[rel="canonical"]');
+  if(!can){ can=document.createElement('link'); can.rel='canonical'; document.head.appendChild(can); }
+  can.href = pageUrl;
+
+  // JSON-LD structured data → local search & Google maps. Friendly business
+  // type maps to a schema.org @type; nothing here is industry-specific.
+  var TYPE = {
+    'Local Business (general)':'LocalBusiness',
+    'Home & Cleaning Services':'HomeAndConstructionBusiness',
+    'Professional / Consulting Services':'ProfessionalService',
+    'Health, Beauty & Wellness':'HealthAndBeautyBusiness',
+    'Restaurant / Food & Drink':'Restaurant',
+    'Lodging / Vacation Rental':'LodgingBusiness',
+    'Tours, Activities & Recreation':'TouristAttraction',
+    'Automotive / Repair':'AutomotiveBusiness',
+    'Retail / Store':'Store',
+    'Events & Entertainment':'EntertainmentBusiness'
+  };
+  var ld = { '@context':'https://schema.org', '@type': TYPE[s.biz_type] || 'LocalBusiness', name: b.name||'', url: pageUrl };
+  if(desc) ld.description = desc;
+  if(img) ld.image = img;
+  if(b.phone) ld.telephone = b.phone;
+  if(s.price_range) ld.priceRange = s.price_range;
+  if(s.area_served) ld.areaServed = s.area_served.split(',').map(function(x){return x.trim();}).filter(Boolean);
+  if(s.address || b.address){ ld.address = { '@type':'PostalAddress', streetAddress: s.address || b.address }; }
+  // socials → sameAs
+  var same = [b.instagram, b.facebook, b.tiktok, b.youtube, b.website].filter(function(u){ return u && /^https?:/i.test(u); });
+  if(same.length) ld.sameAs = same;
+  // aggregate rating from real reviews, if any
+  var revs = (data.reviews||[]).filter(function(r){ return parseFloat(r.stars)>0; });
+  if(revs.length){
+    var avg = revs.reduce(function(a,r){ return a+parseFloat(r.stars); },0)/revs.length;
+    ld.aggregateRating = { '@type':'AggregateRating', ratingValue: Math.round(avg*10)/10, reviewCount: revs.length };
+  }
+  // services / rates as an offer catalog
+  var svc = (data.services||[]).filter(function(x){ return x.name; });
+  if(svc.length){
+    ld.hasOfferCatalog = { '@type':'OfferCatalog', name:'Services', itemListElement: svc.slice(0,20).map(function(x){
+      return { '@type':'Offer', name:x.name, price: x.price!=null?String(x.price):undefined, priceCurrency: x.price!=null?'USD':undefined }; }) };
+  }
+  var tag = document.getElementById('cc-ld');
+  if(!tag){ tag=document.createElement('script'); tag.type='application/ld+json'; tag.id='cc-ld'; document.head.appendChild(tag); }
+  tag.textContent = JSON.stringify(ld);
+}
+</script>
+</body>
+</html>

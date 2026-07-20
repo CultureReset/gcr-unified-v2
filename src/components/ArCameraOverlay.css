@@ -1,0 +1,130 @@
+.ar-cam-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #000;
+  overflow: hidden;
+}
+
+.ar-cam-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ar-cam-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  color: #fff;
+}
+.ar-cam-prompt-icon { font-size: 52px; margin-bottom: 12px; }
+.ar-cam-prompt h2 { font-size: 1.3rem; font-weight: 800; margin: 0 0 10px; }
+.ar-cam-prompt p { color: rgba(255,255,255,.75); font-size: 0.92rem; line-height: 1.5; margin: 0 0 22px; max-width: 320px; }
+.ar-cam-cancel {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.7);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.ar-cam-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.ar-cam-no-compass-hint {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 70px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 10px;
+  line-height: 1.35;
+}
+
+.ar-cam-marker {
+  position: absolute;
+  top: 42%;
+  transition: width .25s ease, height .25s ease, margin .25s ease, left .15s linear;
+  border-radius: 50%;
+  background: rgba(255,255,255,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 4px rgba(255,255,255,.25), 0 8px 24px rgba(0,0,0,.4);
+  overflow: hidden;
+  font-size: 1.6rem;
+}
+.ar-cam-marker img { width: 72%; height: 72%; object-fit: contain; }
+.ar-cam-marker.is-ready {
+  box-shadow: 0 0 0 4px rgba(11,122,117,.55), 0 8px 24px rgba(0,0,0,.4);
+  animation: ar-cam-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ar-cam-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(11,122,117,.55), 0 8px 24px rgba(0,0,0,.4); }
+  50% { box-shadow: 0 0 0 10px rgba(11,122,117,.15), 0 8px 24px rgba(0,0,0,.4); }
+}
+
+.ar-cam-edge-hint {
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  animation: ar-cam-edge-pulse 1.4s ease-in-out infinite;
+}
+.ar-cam-edge-left { left: 12px; }
+.ar-cam-edge-right { right: 12px; }
+@keyframes ar-cam-edge-pulse {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+
+.ar-cam-hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(0,0,0,.75), transparent);
+  text-align: center;
+}
+.ar-cam-hud-brand { color: #fff; font-weight: 800; font-size: 1.05rem; margin-bottom: 2px; }
+.ar-cam-hud-distance { color: rgba(255,255,255,.8); font-size: 0.85rem; font-weight: 600; margin-bottom: 14px; }
+
+.ar-cam-capture-btn {
+  max-width: 280px;
+  margin: 0 auto;
+}
