@@ -660,12 +660,15 @@
   font-size: 1rem;
 }
 
-.btn-primary {
+/* Scoped to .detail-page: this is a local override for the reviews-widget
+   button, not the shared brand .btn-primary (index.css) — an unscoped
+   selector here previously clobbered the primary CTA on every other page. */
+.detail-page .btn-primary {
   background: #00a8cc;
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.detail-page .btn-primary:hover:not(:disabled) {
   background: #0089a8;
 }
 

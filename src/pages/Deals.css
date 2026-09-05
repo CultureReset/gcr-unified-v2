@@ -1,5 +1,5 @@
 /* ── DEALS PAGE ─────────────────────────────────────────────────── */
-:root {
+.deals-page {
   --deal-navy: #0b2d42;
   --deal-teal: #0a8472;
   --deal-gold: #f5b731;
@@ -11,9 +11,6 @@
   --deal-line: rgba(11,45,66,.11);
   --deal-r: 18px;
   --deal-shadow: 0 12px 36px rgba(0,0,0,.1);
-}
-
-.deals-page {
   min-height: 100vh;
   background: var(--deal-cream);
   padding-bottom: calc(80px + env(safe-area-inset-bottom));

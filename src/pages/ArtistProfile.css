@@ -233,17 +233,6 @@
   transition: all 0.2s;
 }
 
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #764ba2;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
 .artist-profile-loading,
 .artist-profile-error {
   padding: 60px 20px;

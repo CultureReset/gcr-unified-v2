@@ -221,39 +221,6 @@
   margin-bottom: 12px;
 }
 
-.btn-primary,
-.btn-secondary,
-.btn-accent {
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-.btn-primary {
-  background: #1a8917;
-  color: white;
-}
-
-.btn-secondary {
-  background: #5a5a5a;
-  color: white;
-}
-
-.btn-accent {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-primary:active,
-.btn-secondary:active,
-.btn-accent:active {
-  transform: scale(0.98);
-}
-
 .artist-links {
   display: flex;
   flex-wrap: wrap;
