@@ -139,8 +139,8 @@ input { outline: none; font-family: inherit; }
 .btn-primary:active { transform: scale(0.97); }
 
 .btn-outline {
-  background: rgba(255,255,255,0.06);
-  color: white;
+  background: var(--bg);
+  color: var(--text);
   padding: 16px 32px;
   border-radius: 50px;
   font-size: 16px;

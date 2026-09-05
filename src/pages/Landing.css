@@ -2,7 +2,8 @@
    GCR HOMEPAGE — Landing.css
    Tokens: navy #061829 · teal #08c6bd · gold #ffd21f
    ══════════════════════════════════════════════════════ */
-:root {
+/* ── PAGE SHELL ─────────────────────────────────────── */
+.hn-page {
   --hn-navy:   #061829;
   --hn-navy2:  #071827;
   --hn-teal:   #08c6bd;
@@ -13,10 +14,6 @@
   --hn-card:   #092038;
   --hn-line:   rgba(255,255,255,.13);
   --hn-muted:  rgba(255,255,255,.65);
-}
-
-/* ── PAGE SHELL ─────────────────────────────────────── */
-.hn-page {
   min-height: 100vh;
   padding-top: 116px;
   background: var(--hn-navy2);

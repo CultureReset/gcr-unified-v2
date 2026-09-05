@@ -860,16 +860,6 @@
 .all-done p { font-size: 15px; color: rgba(255,255,255,0.6); }
 .all-done .btn-primary { width: auto; padding: 14px 32px; }
 
-/* .btn-outline (index.css) is white-on-near-transparent-white — tuned for
-   a dark page, not this (light) screen. Scoped override here rather than
-   editing the shared global class, since it's also used on Itinerary.jsx
-   and that page's theme wasn't part of this pass. */
-.all-done .btn-outline {
-  background: var(--bg);
-  color: var(--text);
-  border-color: var(--border);
-}
-
 /* ── Featured badge ── */
 .card-featured-badge {
   position: absolute;

@@ -1,4 +1,4 @@
-:root {
+.detail-page {
   --accent: #e85d04;
   --accent-dark: #c44d00;
   --card: #fff;
@@ -7,9 +7,6 @@
   --border: #e6ecf3;
   --shadow: 0 2px 8px rgba(0,0,0,.08);
   --chip: #fff5f0;
-}
-
-.detail-page {
   min-height: 100vh;
   background: #f6f8fb;
   /* Clears BottomNav + the "Ask a local" FAB + the install banner, which

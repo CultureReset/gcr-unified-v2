@@ -1,4 +1,4 @@
-:root {
+.browse-container {
   --teal: #0b7a75;
   --teal-light: #13a89e;
   --sky: #e8f4f8;
@@ -9,9 +9,6 @@
   --gray-200: #e9ecef;
   --radius-lg: 20px;
   --shadow: 0 4px 20px rgba(0,0,0,.10);
-}
-
-.browse-container {
   min-height: 100vh;
   background: var(--sand);
   padding: 20px;

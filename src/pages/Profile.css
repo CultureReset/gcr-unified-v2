@@ -34,7 +34,7 @@
 
 .profile-interests h3 { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
 .interest-display { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.interest-pill { padding: 6px 12px; border-radius: 20px; background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.25); color: #c4b5fd; font-size: 12px; font-weight: 600; }
+.interest-pill { padding: 6px 12px; border-radius: 20px; background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.25); color: #6d28d9; font-size: 12px; font-weight: 600; }
 .no-interests { font-size: 13px; color: var(--text3); }
 .edit-interests-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text2); padding: 9px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; }
 
@@ -44,4 +44,4 @@
 .profile-action:active { background: rgba(255,255,255,0.05); }
 .profile-action span:first-child { font-size: 18px; }
 .chevron { margin-left: auto; color: var(--text3); font-size: 20px; }
-.profile-action.danger { color: #fca5a5; }
+.profile-action.danger { color: var(--red); }

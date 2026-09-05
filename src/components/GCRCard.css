@@ -1,4 +1,4 @@
-:root {
+.gcr-card {
   --brand: #0b7a75;
   --brand-dark: #065f5b;
   --brand-soft: #e8f7fa;
@@ -7,9 +7,6 @@
   --radius: 18px;
   --text: #12263a;
   --muted: #66788a;
-}
-
-.gcr-card {
   background: #fff;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
