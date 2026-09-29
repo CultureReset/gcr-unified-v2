@@ -8,10 +8,10 @@
 The Vercel project `gcr-unified2` looks like its deployment, but the git link is
 not visible from here.
 
-> **Secrets in this repo.** `.env.vercel` (a `VERCEL_OIDC_TOKEN`) is tracked in
-> git. Those tokens are short-lived, but it should not be committed; rotate it
-> and remove the file from the repo. `.env.production` holds only public
-> client-side settings.
+> **Secrets.** `.env.vercel` (a `VERCEL_OIDC_TOKEN`) used to be tracked in git.
+> It is now untracked and ignored, but it is still in earlier commits: those
+> tokens are short-lived, but rotate it if it is still valid. `.env.production`
+> holds only public client-side settings.
 
 ---
 
