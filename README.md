@@ -43,13 +43,15 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
+
+
 <!-- branches:start -->
 ## Branches
 
 *Read from GitHub on 2026-09-29. 3 branches.*
 
-- **Default branch on GitHub:** `master`.
-- **`claude/repo-code-analysis-y4n1k7`** is where this README and the audit fixes live. It contains every commit on `master` and more (this README, the audit fixes and the screenshots).
+- **Default branch on GitHub:** `master`. It does **not** yet have this README or the audit fixes; those are on `claude/repo-code-analysis-y4n1k7`, which contains every commit of `master` and more, so it can be fast-forwarded without losing anything.
+- **`claude/repo-code-analysis-y4n1k7`** is where the README audit, the screenshots and the fixes were made.
 - **1 other branch holds commits that `claude/repo-code-analysis-y4n1k7` does not have.** The newest is `claude/gcr-unified-login-styling-1mmsac` (last commit 2026-09-05, 3 commits not in the work branch). Check it before assuming the work branch is the whole story.
 
 | Branch | Last commit | Not in the work branch | Last commit message |
