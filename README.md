@@ -43,6 +43,23 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
+<!-- branches:start -->
+## Branches
+
+*Read from GitHub on 2026-09-29. 3 branches.*
+
+- **Default branch on GitHub:** `master`.
+- **`claude/repo-code-analysis-y4n1k7`** is where this README and the audit fixes live. It contains every commit on `master` and more (this README, the audit fixes and the screenshots).
+- **1 other branch holds commits that `claude/repo-code-analysis-y4n1k7` does not have.** The newest is `claude/gcr-unified-login-styling-1mmsac` (last commit 2026-09-05, 3 commits not in the work branch). Check it before assuming the work branch is the whole story.
+
+| Branch | Last commit | Not in the work branch | Last commit message |
+| --- | --- | --- | --- |
+| `claude/repo-code-analysis-y4n1k7` (work branch) | 2026-09-29 | - | this README and the audit fixes |
+| `claude/gcr-unified-login-styling-1mmsac` | 2026-09-05 | 3 | Mirror all of gcr-unified's light-theme contrast fixes into this branch |
+| `master` (default) | 2026-07-20 | 0 | Initial copy from gcr-unified — starting point for structured-data rebui |
+
+<!-- branches:end -->
+
 ## React Compiler
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
