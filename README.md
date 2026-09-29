@@ -1,3 +1,20 @@
+# gcr-unified-v2
+
+**A starting copy of `gcr-unified`** (see `git log`: "Initial copy from gcr-unified
+— starting point for structured-data rebuild"). It has the same pages and build as
+`gcr-unified`; read that README for what the site is and how to run it
+(`npm install`, `npm run dev`, `npm run build`). It is not part of the Ghost box.
+
+The Vercel project `gcr-unified2` looks like its deployment, but the git link is
+not visible from here.
+
+> **Secrets in this repo.** `.env.vercel` (a `VERCEL_OIDC_TOKEN`) is tracked in
+> git. Those tokens are short-lived, but it should not be committed; rotate it
+> and remove the file from the repo. `.env.production` holds only public
+> client-side settings.
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
