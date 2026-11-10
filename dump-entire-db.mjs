@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 
-const SUPABASE_URL = 'https://mkepugvdlktfsossumox.supabase.co'
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rZXB1Z3ZkbGt0ZnNvc3N1bW94Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTQyMjQwMSwiZXhwIjoyMDk0OTk4NDAxfQ.uWxvQQKDxbaAz0FgcfwOhH3mtq92uXPOc4luQnw48DI'
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://mkepugvdlktfsossumox.supabase.co'
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SUPABASE_SERVICE_KEY) { console.error('Set SUPABASE_SERVICE_ROLE_KEY (never commit it).'); process.exit(1); }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
